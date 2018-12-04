@@ -8,6 +8,7 @@ import main.java.Exceptions.*;
 import jade.lang.acl.ACLMessage;
 
 import java.util.Date;
+import java.util.Objects;
 
 
 public class ServiceProviderInterface extends ServiceProviderCommonBehaviour implements ServiceProviderInterfaceInterface {
@@ -21,33 +22,43 @@ public class ServiceProviderInterface extends ServiceProviderCommonBehaviour imp
 
     @Override
     public void setServiceProviderData(ServiceProviderData data) throws negativeValueException {
-        if(data.openingHour != null && openingHour != data.openingHour){
+        if (data.openingHour != null && openingHour != data.openingHour) {
             openingHour = data.openingHour;
         }
-        if(data.closingHour != null && closingHour != data.closingHour){
+        if (data.closingHour != null && closingHour != data.closingHour) {
             closingHour = data.closingHour;
         }
-        if(data.maximumNumberOfPlaces != 0 && maximumNumberOfPlaces != data.maximumNumberOfPlaces){
-            if(data.maximumNumberOfPlaces < 0){
+        if (data.maximumNumberOfPlaces != 0 && maximumNumberOfPlaces != data.maximumNumberOfPlaces) {
+            if (data.maximumNumberOfPlaces < 0) {
                 throw new negativeValueException("maximumNumberOfPlaces");
             }
             maximumNumberOfPlaces = data.maximumNumberOfPlaces;
         }
-        
-
+        if (data.name != null && !Objects.equals(name, data.name)) {
+            name = data.name;
+        }
+        if (data.type != null && !Objects.equals(type, data.type)) {
+            type = data.type;
+        }
+        if (data.address != null && !Objects.equals(address, data.address)) {
+            address = data.address;
+        }
     }
 
     @Override
     public void action() {
-
         ACLMessage msg = myAgent.blockingReceive();
         if (msg != null) {
             System.out.println("Message: " + msg.toString());
             String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
-                    System.out.println("ads");
-
+                    break;
+                case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
+                    break;
+                default:
+                    myAgent.send(createNotUnderstoodMessage(msg));
+                    break;
             }
         }
     }
