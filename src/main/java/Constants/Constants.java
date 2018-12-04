@@ -1,4 +1,4 @@
-package main.java.Constants;
+package Constants;
 
 public class Constants {
     public static class ServiceProviderInterfaceMessages{

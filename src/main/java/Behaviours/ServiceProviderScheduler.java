@@ -1,9 +1,10 @@
-package main.java.Behaviours;
+package Behaviours;
 
-import main.java.Constants.Constants;
+import Constants.*;
 
+import Data.ReservationData;
 import jade.lang.acl.ACLMessage;
-import main.java.Data.ReservationData;
+
 
 import java.util.ArrayList;
 import java.util.Date;

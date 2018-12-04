@@ -1,7 +1,6 @@
-package main.java.Behaviours;
+package Behaviours;
 
-import main.java.Constants.Constants;
-
+import Constants.*;
 import jade.lang.acl.ACLMessage;
 
 public class ServiceProviderSecretary extends ServiceProviderCommonBehaviour {

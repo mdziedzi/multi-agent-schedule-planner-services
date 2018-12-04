@@ -1,10 +1,9 @@
-package main.java.Behaviours;
+package Behaviours;
 
-import main.java.Constants.Constants;
-import main.java.Data.ServiceProviderData;
-import main.java.Interfaces.ServiceProviderInterfaceInterface;
-import main.java.Exceptions.*;
-
+import Constants.*;
+import Data.ServiceProviderData;
+import Exceptions.negativeValueException;
+import Interfaces.ServiceProviderInterfaceInterface;
 import jade.lang.acl.ACLMessage;
 
 import java.util.Date;

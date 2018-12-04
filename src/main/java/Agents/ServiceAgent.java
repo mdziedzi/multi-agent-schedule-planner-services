@@ -1,9 +1,12 @@
-package main.java.Agents;
+package Agents;
 
+import Behaviours.ServiceProviderInterface;
+import Behaviours.ServiceProviderScheduler;
+import Behaviours.ServiceProviderSecretary;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
-import main.java.Behaviours.*;
+
 
 import javax.naming.PartialResultException;
 

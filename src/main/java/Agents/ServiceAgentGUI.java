@@ -1,4 +1,6 @@
-package main.java.Agents;
+package Agents;
+
+import Agents.ServiceAgent;
 
 import javax.swing.*;
 import java.awt.*;
