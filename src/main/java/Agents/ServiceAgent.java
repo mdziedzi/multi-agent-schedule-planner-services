@@ -1,13 +1,11 @@
 package main.java.Agents;
 
-import jade.core.behaviours.CyclicBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAException;
+import jade.core.behaviours.ParallelBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import main.java.Behaviours.*;
+
+import javax.naming.PartialResultException;
 
 public class ServiceAgent extends GuiAgent {
 
@@ -18,9 +16,13 @@ public class ServiceAgent extends GuiAgent {
         // init GUI
         serviceAgentGUI = new ServiceAgentGUI(this);
 
-        addBehaviour(new ServiceProviderInterface());
-        addBehaviour(new ServiceProviderScheduler());
-        addBehaviour(new ServiceProviderSecretary());
+        ParallelBehaviour parallelBehaviour = new ParallelBehaviour();
+
+        parallelBehaviour.addSubBehaviour(new ServiceProviderInterface());
+        parallelBehaviour.addSubBehaviour(new ServiceProviderScheduler());
+        parallelBehaviour.addSubBehaviour(new ServiceProviderSecretary());
+
+        addBehaviour(parallelBehaviour);
     }
 
     @Override

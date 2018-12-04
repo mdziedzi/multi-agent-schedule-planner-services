@@ -3,8 +3,21 @@ package main.java.Behaviours;
 import main.java.Constants.Constants;
 
 import jade.lang.acl.ACLMessage;
+import main.java.Data.ReservationData;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class ServiceProviderScheduler extends ServiceProviderCommonBehaviour {
+
+    private static final Date slotDuration = new Date(0, 0,0,0,15);
+
+    private ArrayList<ArrayList<ReservationData>> reservations;
+
+    public ServiceProviderScheduler(){
+        reservations = null;
+    }
+
     @Override
     public void action() {
 

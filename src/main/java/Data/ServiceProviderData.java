@@ -3,12 +3,12 @@ package main.java.Data;
 import java.util.Date;
 
 public class ServiceProviderData {
-    public final Date openingHour;
-    public final Date closingHour;
-    public final int maximumNumberOfPlaces;
-    public final String name;
-    public final String type;
-    public final String address;
+    public Date openingHour;
+    public Date closingHour;
+    public int maximumNumberOfPlaces;
+    public String name;
+    public String type;
+    public String address;
 
     public ServiceProviderData() {
         openingHour = null;
@@ -18,4 +18,18 @@ public class ServiceProviderData {
         type = null;
         address = null;
     }
+
+    @Override
+    public String toString() {
+        return "ServiceProviderData{" +
+                "openingHour=" + openingHour +
+                ", closingHour=" + closingHour +
+                ", maximumNumberOfPlaces=" + maximumNumberOfPlaces +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
+
+
 }

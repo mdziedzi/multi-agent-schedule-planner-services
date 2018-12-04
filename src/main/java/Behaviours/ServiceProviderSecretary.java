@@ -15,7 +15,7 @@ public class ServiceProviderSecretary extends ServiceProviderCommonBehaviour {
             switch (conversationId) {
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_STATUS:
                     break;
-                case Constants.ServiceProviderSecretaryMessages.RECEVICE_RESERVATION_REQUEST:
+                case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_REQUEST:
                     break;
                 case Constants.ServiceProviderSecretaryMessages.SEND_RESERVATION_RESPONSE:
                     break;

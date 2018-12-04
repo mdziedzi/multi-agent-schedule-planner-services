@@ -8,7 +8,7 @@ public class Constants {
 
     public static class ServiceProviderSecretaryMessages{
         public static final String SEND_SERVICE_DATA = "send_service_data";
-        public static final String RECEVICE_RESERVATION_REQUEST = "receive_reservation_request";
+        public static final String RECEIVE_RESERVATION_REQUEST = "receive_reservation_request";
         public static final String SEND_RESERVATION_RESPONSE = "send_reservation_response";
         public static final String SEND_RESERVATION_TO_PROCESS = "send_reservation_to_process";
         public static final String RECEIVE_RESERVATION_STATUS = "receive_reservation_status";

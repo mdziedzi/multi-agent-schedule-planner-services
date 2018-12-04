@@ -47,17 +47,22 @@ public class ServiceProviderInterface extends ServiceProviderCommonBehaviour imp
 
     @Override
     public void action() {
-        ACLMessage msg = myAgent.blockingReceive();
-        if (msg != null) {
-            System.out.println("Message: " + msg.toString());
-            String conversationId = msg.getConversationId();
+        ACLMessage aclMessage = myAgent.blockingReceive();
+        if (aclMessage != null) {
+            System.out.println("Message: " + aclMessage.toString());
+            String conversationId = aclMessage.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
                     break;
                 case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
+                    ACLMessage msg = new ACLMessage();
+                    msg.setConversationId(Constants.ServiceProviderSchedulerMessages.RECEIVE_SERVICE_DATA);
+
+                    //msg.setContent();
+                    myAgent.send(msg);
                     break;
                 default:
-                    myAgent.send(createNotUnderstoodMessage(msg));
+                    myAgent.send(createNotUnderstoodMessage(aclMessage));
                     break;
             }
         }
