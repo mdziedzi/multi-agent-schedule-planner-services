@@ -1,3 +1,5 @@
+package main.java.Agents;
+
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
