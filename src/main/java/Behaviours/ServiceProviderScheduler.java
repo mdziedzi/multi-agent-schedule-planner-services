@@ -1,11 +1,8 @@
 package Behaviours;
 
 import Constants.*;
-
 import Data.ReservationData;
 import jade.lang.acl.ACLMessage;
-
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -21,8 +18,6 @@ public class ServiceProviderScheduler extends ServiceProviderCommonBehaviour {
 
     @Override
     public void action() {
-
-        ACLMessage msg = myAgent.blockingReceive();
         if (msg != null) {
             System.out.println("Message: " + msg.toString());
             String conversationId = msg.getConversationId();
@@ -40,6 +35,23 @@ public class ServiceProviderScheduler extends ServiceProviderCommonBehaviour {
                     break;
             }
         }
+    }
+
+    @Override
+    public boolean isMessageRelevant(ACLMessage msg) {
+        if(msg != null)
+        {
+            switch(msg.getConversationId()){
+                case Constants.ServiceProviderSchedulerMessages.NOTIFY_CHANGES:
+                case Constants.ServiceProviderSchedulerMessages.RECEIVE_RESERVATION_TO_PROCESS:
+                case Constants.ServiceProviderSchedulerMessages.RECEIVE_SERVICE_DATA:
+                case Constants.ServiceProviderSchedulerMessages.SEND_RESERVATION_STATUS:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
     }
 
     @Override

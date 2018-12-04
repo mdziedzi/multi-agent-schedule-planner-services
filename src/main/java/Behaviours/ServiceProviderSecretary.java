@@ -4,10 +4,8 @@ import Constants.*;
 import jade.lang.acl.ACLMessage;
 
 public class ServiceProviderSecretary extends ServiceProviderCommonBehaviour {
-
     @Override
     public void action() {
-        ACLMessage msg = myAgent.blockingReceive();
         if (msg != null) {
             System.out.println("Message: " + msg.toString());
             String conversationId = msg.getConversationId();
@@ -27,6 +25,24 @@ public class ServiceProviderSecretary extends ServiceProviderCommonBehaviour {
                     break;
             }
         }
+    }
+
+    @Override
+    public boolean isMessageRelevant(ACLMessage msg) {
+        if(msg != null)
+        {
+            switch(msg.getConversationId()){
+                case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_STATUS:
+                case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_REQUEST:
+                case Constants.ServiceProviderSecretaryMessages.SEND_RESERVATION_RESPONSE:
+                case Constants.ServiceProviderSecretaryMessages.SEND_RESERVATION_TO_PROCESS:
+                case Constants.ServiceProviderSecretaryMessages.SEND_SERVICE_DATA:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
     }
 
     @Override

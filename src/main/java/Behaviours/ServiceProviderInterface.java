@@ -5,7 +5,6 @@ import Data.ServiceProviderData;
 import Exceptions.negativeValueException;
 import Interfaces.ServiceProviderInterfaceInterface;
 import jade.lang.acl.ACLMessage;
-
 import java.util.Date;
 import java.util.Objects;
 
@@ -46,25 +45,34 @@ public class ServiceProviderInterface extends ServiceProviderCommonBehaviour imp
 
     @Override
     public void action() {
-        ACLMessage aclMessage = myAgent.blockingReceive();
-        if (aclMessage != null) {
-            System.out.println("Message: " + aclMessage.toString());
-            String conversationId = aclMessage.getConversationId();
+        if (msg != null) {
+            System.out.println("Message: " + msg.toString());
+            String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
                     break;
                 case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
-                    ACLMessage msg = new ACLMessage();
-                    msg.setConversationId(Constants.ServiceProviderSchedulerMessages.RECEIVE_SERVICE_DATA);
-
-                    //msg.setContent();
-                    myAgent.send(msg);
                     break;
                 default:
-                    myAgent.send(createNotUnderstoodMessage(aclMessage));
+                    myAgent.send(createNotUnderstoodMessage(msg));
                     break;
             }
         }
+    }
+
+    @Override
+    public boolean isMessageRelevant(ACLMessage msg) {
+        if(msg != null)
+        {
+           switch(msg.getConversationId()){
+               case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
+               case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
+                   return true;
+               default:
+                   return false;
+           }
+        }
+        return false;
     }
 
     public boolean done() {

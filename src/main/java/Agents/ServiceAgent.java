@@ -1,14 +1,8 @@
 package Agents;
 
-import Behaviours.ServiceProviderInterface;
-import Behaviours.ServiceProviderScheduler;
-import Behaviours.ServiceProviderSecretary;
-import jade.core.behaviours.ParallelBehaviour;
+import Behaviours.ServiceProviderBasicBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
-
-
-import javax.naming.PartialResultException;
 
 public class ServiceAgent extends GuiAgent {
 
@@ -16,21 +10,13 @@ public class ServiceAgent extends GuiAgent {
 
     @Override
     protected void setup() {
-        // init GUI
         serviceAgentGUI = new ServiceAgentGUI(this);
 
-        ParallelBehaviour parallelBehaviour = new ParallelBehaviour();
-
-        parallelBehaviour.addSubBehaviour(new ServiceProviderInterface());
-        parallelBehaviour.addSubBehaviour(new ServiceProviderScheduler());
-        parallelBehaviour.addSubBehaviour(new ServiceProviderSecretary());
-
-        addBehaviour(parallelBehaviour);
+        addBehaviour(new ServiceProviderBasicBehaviour());
     }
 
     @Override
     protected void takeDown() {
-        // Printout a dismissal message
         System.out.println("Service-agent " + getAID().getName() + " terminating.");
     }
 

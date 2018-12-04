@@ -1,7 +1,6 @@
 package Data;
 
 import jade.core.AID;
-
 import java.util.Date;
 
 public class ReservationData {
