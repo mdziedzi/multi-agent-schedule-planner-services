@@ -1,9 +1,9 @@
 package Behaviours;
 
-import Constants.*;
+import Constants.Constants;
 import jade.lang.acl.ACLMessage;
 
-public class ServiceProviderSecretary extends ServiceProviderCommonBehaviour {
+public class ServiceProviderSecretary extends CommonBehaviour {
     @Override
     public void action() {
         if (msg != null) {
@@ -29,9 +29,8 @@ public class ServiceProviderSecretary extends ServiceProviderCommonBehaviour {
 
     @Override
     public boolean isMessageRelevant(ACLMessage msg) {
-        if(msg != null)
-        {
-            switch(msg.getConversationId()){
+        if (msg != null) {
+            switch (msg.getConversationId()) {
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_STATUS:
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_REQUEST:
                 case Constants.ServiceProviderSecretaryMessages.SEND_RESERVATION_RESPONSE:

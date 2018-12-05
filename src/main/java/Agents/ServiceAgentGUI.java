@@ -1,6 +1,7 @@
 package Agents;
 
 import Data.ServiceProviderData;
+import jade.gui.GuiEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,16 +61,19 @@ public class ServiceAgentGUI extends JFrame {
             fieldPanel.add(p);
         }
 
+
         btn = new JButton("Send");
         btn.addActionListener(e -> {
             try {
-                new ServiceProviderData(
+                GuiEvent ge = new GuiEvent(ServiceAgentGUI.this, 1);
+                ge.addParameter(new ServiceProviderData(
                         parseDate(fields[0].getText()),
                         parseDate(fields[1].getText()),
                         Integer.valueOf(fields[2].getText()),
                         fields[3].getText(),
                         fields[4].getText(),
-                        fields[5].getText());
+                        fields[5].getText()));
+                serviceAgent.postGuiEvent(ge);
             } catch (ParseException e1) {
                 e1.printStackTrace();
             }

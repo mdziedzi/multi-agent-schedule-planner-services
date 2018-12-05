@@ -1,6 +1,7 @@
 package Data;
 
 import jade.core.AID;
+
 import java.util.Date;
 
 public class ReservationData {
@@ -9,7 +10,7 @@ public class ReservationData {
     public final Date beginHour;
     public final Date endHour;
 
-    public ReservationData(){
+    public ReservationData() {
         id = 0;
         agentId = null;
         beginHour = null;

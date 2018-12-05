@@ -1,15 +1,16 @@
 package Behaviours;
 
-import Constants.*;
+import Constants.Constants;
 import Data.ServiceProviderData;
 import Exceptions.negativeValueException;
 import Interfaces.ServiceProviderInterfaceInterface;
 import jade.lang.acl.ACLMessage;
+
 import java.util.Date;
 import java.util.Objects;
 
 
-public class ServiceProviderInterface extends ServiceProviderCommonBehaviour implements ServiceProviderInterfaceInterface {
+public class ServiceProviderInterface extends CommonBehaviour implements ServiceProviderInterfaceInterface {
 
     private Date openingHour = null;
     private Date closingHour = null;
@@ -62,15 +63,14 @@ public class ServiceProviderInterface extends ServiceProviderCommonBehaviour imp
 
     @Override
     public boolean isMessageRelevant(ACLMessage msg) {
-        if(msg != null)
-        {
-           switch(msg.getConversationId()){
-               case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
-               case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
-                   return true;
-               default:
-                   return false;
-           }
+        if (msg != null) {
+            switch (msg.getConversationId()) {
+                case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
+                case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
+                    return true;
+                default:
+                    return false;
+            }
         }
         return false;
     }

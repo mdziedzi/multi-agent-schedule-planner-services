@@ -1,18 +1,19 @@
 package Behaviours;
 
-import Constants.*;
+import Constants.Constants;
 import Data.ReservationData;
 import jade.lang.acl.ACLMessage;
+
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ServiceProviderScheduler extends ServiceProviderCommonBehaviour {
+public class ServiceProviderScheduler extends CommonBehaviour {
 
-    private static final Date slotDuration = new Date(0, 0,0,0,15);
+    private static final Date slotDuration = new Date(0, 0, 0, 0, 15);
 
     private ArrayList<ArrayList<ReservationData>> reservations;
 
-    public ServiceProviderScheduler(){
+    public ServiceProviderScheduler() {
         reservations = null;
     }
 
@@ -39,9 +40,8 @@ public class ServiceProviderScheduler extends ServiceProviderCommonBehaviour {
 
     @Override
     public boolean isMessageRelevant(ACLMessage msg) {
-        if(msg != null)
-        {
-            switch(msg.getConversationId()){
+        if (msg != null) {
+            switch (msg.getConversationId()) {
                 case Constants.ServiceProviderSchedulerMessages.NOTIFY_CHANGES:
                 case Constants.ServiceProviderSchedulerMessages.RECEIVE_RESERVATION_TO_PROCESS:
                 case Constants.ServiceProviderSchedulerMessages.RECEIVE_SERVICE_DATA:

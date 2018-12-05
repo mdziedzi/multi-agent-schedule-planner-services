@@ -1,8 +1,10 @@
 package Agents;
 
-import Behaviours.ServiceProviderBasicBehaviour;
+import Behaviours.*;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
+
+import java.util.ArrayList;
 
 public class ServiceAgent extends GuiAgent {
 
@@ -12,7 +14,15 @@ public class ServiceAgent extends GuiAgent {
     protected void setup() {
         serviceAgentGUI = new ServiceAgentGUI(this);
 
-        addBehaviour(new ServiceProviderBasicBehaviour());
+        ArrayList<CommonBehaviour> myBehaviours;
+
+        myBehaviours = new ArrayList<>();
+
+        myBehaviours.add(new ServiceProviderInterface());
+        myBehaviours.add(new ServiceProviderSecretary());
+        myBehaviours.add(new ServiceProviderScheduler());
+
+        addBehaviour(new BasicBehaviour(myBehaviours));
     }
 
     @Override
@@ -22,6 +32,6 @@ public class ServiceAgent extends GuiAgent {
 
     @Override
     protected void onGuiEvent(GuiEvent guiEvent) {
-
+        System.out.println(guiEvent.getParameter(0));
     }
 }
