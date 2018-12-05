@@ -9,7 +9,7 @@ public class ServiceProviderBasicBehaviour extends CyclicBehaviour {
 
     public ServiceProviderBasicBehaviour()
     {
-        myBehaviours  = new ArrayList();
+        myBehaviours  = new ArrayList<>();
 
         myBehaviours.add(new ServiceProviderInterface());
         myBehaviours.add(new ServiceProviderSecretary());
