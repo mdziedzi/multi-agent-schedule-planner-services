@@ -1,6 +1,8 @@
 package Agents;
 
 import Behaviours.*;
+import Data.ServiceProviderData;
+import Exceptions.negativeValueException;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 
@@ -37,5 +39,10 @@ public class ServiceAgent extends GuiAgent {
     @Override
     protected void onGuiEvent(GuiEvent guiEvent) {
         System.out.println(guiEvent.getParameter(0));
+        try {
+            serviceInterface.setServiceProviderData((ServiceProviderData) guiEvent.getParameter(0));
+        } catch (negativeValueException e) {
+            e.printStackTrace(); //TODO
+        }
     }
 }

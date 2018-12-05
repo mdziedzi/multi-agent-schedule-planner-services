@@ -49,8 +49,6 @@ public class ServiceAgentGUI extends JFrame {
             fields[i] = new JTextField();
             fields[i].setColumns(20);
 
-            fields[i].setToolTipText("dd-mm-rrrr");
-
             JLabel lab = new JLabel(labels[i], JLabel.RIGHT);
             lab.setLabelFor(fields[i]);
 
@@ -60,6 +58,9 @@ public class ServiceAgentGUI extends JFrame {
             p.add(fields[i]);
             fieldPanel.add(p);
         }
+
+        fields[0].setToolTipText("hh:mm");
+        fields[1].setToolTipText("hh:mm");
 
 
         btn = new JButton("Send");
@@ -75,7 +76,17 @@ public class ServiceAgentGUI extends JFrame {
                         fields[5].getText()));
                 serviceAgent.postGuiEvent(ge);
             } catch (ParseException e1) {
-                e1.printStackTrace();
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Opening/closing hours should be in format hh:mm.",
+                        "Wrong hour format",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException e1) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Max number of seats should be a number",
+                        "Wrong seats nr format",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -90,8 +101,13 @@ public class ServiceAgentGUI extends JFrame {
         setVisible(true);
     }
 
+//    private boolean isDataCorrect() {
+//
+//
+//    }
+
     private Date parseDate(String date) throws ParseException {
-        return new SimpleDateFormat("dd-MM-yyyy").parse(date);
+        return new SimpleDateFormat("hh:mm").parse(date);
     }
 
 
