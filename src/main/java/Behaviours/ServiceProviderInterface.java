@@ -40,6 +40,8 @@ public class ServiceProviderInterface extends CommonBehaviour{
         if (data.address != null && !Objects.equals(address, data.address)) {
             address = data.address;
         }
+
+        ServiceProviderData.fromString(data.toString());
     }
 
     @Override
