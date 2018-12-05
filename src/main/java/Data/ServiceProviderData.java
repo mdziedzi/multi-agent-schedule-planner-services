@@ -19,6 +19,21 @@ public class ServiceProviderData {
         address = null;
     }
 
+    public ServiceProviderData(
+            Date openingHour,
+            Date closingHour,
+            int maximumNumberOfPlaces,
+            String name,
+            String type,
+            String address) {
+        this.openingHour = openingHour;
+        this.closingHour = closingHour;
+        this.maximumNumberOfPlaces = maximumNumberOfPlaces;
+        this.name = name;
+        this.type = type;
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return "ServiceProviderData{" +
