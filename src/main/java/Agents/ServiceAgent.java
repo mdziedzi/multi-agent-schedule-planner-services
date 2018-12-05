@@ -10,15 +10,19 @@ public class ServiceAgent extends GuiAgent {
 
     private ServiceAgentGUI serviceAgentGUI;
 
+    private ServiceProviderInterface serviceInterface;
+
     @Override
     protected void setup() {
         serviceAgentGUI = new ServiceAgentGUI(this);
 
         ArrayList<CommonBehaviour> myBehaviours;
 
+        serviceInterface = new ServiceProviderInterface();
+
         myBehaviours = new ArrayList<>();
 
-        myBehaviours.add(new ServiceProviderInterface());
+        myBehaviours.add(serviceInterface);
         myBehaviours.add(new ServiceProviderSecretary());
         myBehaviours.add(new ServiceProviderScheduler());
 

@@ -3,14 +3,13 @@ package Behaviours;
 import Constants.Constants;
 import Data.ServiceProviderData;
 import Exceptions.negativeValueException;
-import Interfaces.ServiceProviderInterfaceInterface;
 import jade.lang.acl.ACLMessage;
 
 import java.util.Date;
 import java.util.Objects;
 
 
-public class ServiceProviderInterface extends CommonBehaviour implements ServiceProviderInterfaceInterface {
+public class ServiceProviderInterface extends CommonBehaviour{
 
     private Date openingHour = null;
     private Date closingHour = null;
@@ -19,7 +18,6 @@ public class ServiceProviderInterface extends CommonBehaviour implements Service
     private String type = null;
     private String address = null;
 
-    @Override
     public void setServiceProviderData(ServiceProviderData data) throws negativeValueException {
         if (data.openingHour != null && openingHour != data.openingHour) {
             openingHour = data.openingHour;
