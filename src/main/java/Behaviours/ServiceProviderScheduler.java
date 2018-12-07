@@ -7,7 +7,7 @@ import jade.lang.acl.ACLMessage;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ServiceProviderScheduler extends CommonBehaviour {
+public class ServiceProviderScheduler extends CommonTask {
 
     private static final Date slotDuration = new Date(0, 0, 0, 0, 15);
 
@@ -18,7 +18,7 @@ public class ServiceProviderScheduler extends CommonBehaviour {
     }
 
     @Override
-    public void action() {
+    public ACLMessage ProcessMessage(ACLMessage msg) {
         if (msg != null) {
             System.out.println("Message: " + msg.toString());
             String conversationId = msg.getConversationId();
@@ -32,10 +32,10 @@ public class ServiceProviderScheduler extends CommonBehaviour {
                 case Constants.ServiceProviderSchedulerMessages.SEND_RESERVATION_STATUS:
                     break;
                 default:
-                    myAgent.send(createNotUnderstoodMessage(msg));
-                    break;
+                    return createNotUnderstoodMessage(msg);
             }
         }
+        return new ACLMessage();
     }
 
     @Override
@@ -51,11 +51,6 @@ public class ServiceProviderScheduler extends CommonBehaviour {
                     return false;
             }
         }
-        return false;
-    }
-
-    @Override
-    public boolean done() {
         return false;
     }
 }

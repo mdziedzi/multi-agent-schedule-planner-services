@@ -4,14 +4,10 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
 
-public abstract class CommonBehaviour extends Behaviour {
+public abstract class CommonTask {
     public abstract boolean isMessageRelevant(ACLMessage msg);
 
-    protected ACLMessage msg;
-
-    public void SetACLMessage(ACLMessage message) {
-        msg = message;
-    }
+    public abstract ACLMessage ProcessMessage(ACLMessage message);
 
     public ACLMessage createNotUnderstoodMessage(ACLMessage message) {
         ACLMessage reply = message.createReply();

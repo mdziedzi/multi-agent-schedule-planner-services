@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Objects;
 
 
-public class ServiceProviderInterface extends CommonBehaviour{
+public class ServiceProviderInterface extends CommonTask {
 
     private Date openingHour = null;
     private Date closingHour = null;
@@ -45,7 +45,7 @@ public class ServiceProviderInterface extends CommonBehaviour{
     }
 
     @Override
-    public void action() {
+    public ACLMessage ProcessMessage(ACLMessage msg) {
         if (msg != null) {
             System.out.println("Message: " + msg.toString());
             String conversationId = msg.getConversationId();
@@ -55,10 +55,10 @@ public class ServiceProviderInterface extends CommonBehaviour{
                 case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
                     break;
                 default:
-                    myAgent.send(createNotUnderstoodMessage(msg));
-                    break;
+                    return createNotUnderstoodMessage(msg);
             }
         }
+        return new ACLMessage();
     }
 
     @Override
@@ -72,10 +72,6 @@ public class ServiceProviderInterface extends CommonBehaviour{
                     return false;
             }
         }
-        return false;
-    }
-
-    public boolean done() {
         return false;
     }
 }

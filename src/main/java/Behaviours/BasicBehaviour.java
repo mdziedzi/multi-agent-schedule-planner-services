@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public class BasicBehaviour extends CyclicBehaviour {
 
-    private ArrayList<CommonBehaviour> myBehaviours;
+    private ArrayList<CommonTask> TasksList;
 
-    public BasicBehaviour(ArrayList<CommonBehaviour> behaviours) {
-        myBehaviours = new ArrayList<>(behaviours);
+    public BasicBehaviour(ArrayList<CommonTask> tasks) {
+        TasksList = new ArrayList<>(tasks);
     }
 
     @Override
@@ -18,11 +18,10 @@ public class BasicBehaviour extends CyclicBehaviour {
         ACLMessage msg = myAgent.receive();
         boolean isSPFound = false;
         if (msg != null) {
-            for (CommonBehaviour sp : myBehaviours) {
+            for (CommonTask sp : TasksList) {
                 if (sp.isMessageRelevant(msg)) {
                     isSPFound = true;
-                    sp.SetACLMessage(msg);
-                    sp.action();
+                    myAgent.send(sp.ProcessMessage(msg));
                 }
             }
             if (!isSPFound) {

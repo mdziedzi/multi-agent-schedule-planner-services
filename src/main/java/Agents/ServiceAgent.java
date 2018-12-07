@@ -18,7 +18,7 @@ public class ServiceAgent extends GuiAgent {
     protected void setup() {
         serviceAgentGUI = new ServiceAgentGUI(this);
 
-        ArrayList<CommonBehaviour> myBehaviours;
+        ArrayList<CommonTask> myBehaviours;
 
         serviceInterface = new ServiceProviderInterface();
 
