@@ -47,10 +47,14 @@ public class ServiceProviderInterface extends CommonTask {
     @Override
     public ACLMessage ProcessMessage(ACLMessage msg) {
         if (msg != null) {
-            System.out.println("Message: " + msg.toString());
             String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
+                    ACLMessage msg2 = new ACLMessage();
+                    msg2.setConversationId(Constants.ServiceProviderSchedulerMessages.NOTIFY_CHANGES);
+                    if(SendMessageToOtherTask(msg2)){
+                        System.out.println("OK");
+                    }
                     break;
                 case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
                     break;

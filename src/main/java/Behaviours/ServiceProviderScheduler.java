@@ -20,7 +20,6 @@ public class ServiceProviderScheduler extends CommonTask {
     @Override
     public ACLMessage ProcessMessage(ACLMessage msg) {
         if (msg != null) {
-            System.out.println("Message: " + msg.toString());
             String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderSchedulerMessages.NOTIFY_CHANGES:

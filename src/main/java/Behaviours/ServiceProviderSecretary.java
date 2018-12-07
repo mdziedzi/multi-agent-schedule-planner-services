@@ -7,7 +7,6 @@ public class ServiceProviderSecretary extends CommonTask {
     @Override
     public ACLMessage ProcessMessage(ACLMessage msg) {
         if (msg != null) {
-            System.out.println("Message: " + msg.toString());
             String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_STATUS:

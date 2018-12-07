@@ -30,6 +30,16 @@ public class BasicBehaviour extends CyclicBehaviour {
         }
     }
 
+    public boolean SendMessageToTask(ACLMessage msg){
+        for(CommonTask ct : TasksList){
+            if(ct.isMessageRelevant(msg)){
+                ct.ProcessMessage(msg);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public ACLMessage createNotUnderstoodMessage(ACLMessage message) {
         ACLMessage reply = message.createReply();
         reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);

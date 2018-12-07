@@ -18,17 +18,23 @@ public class ServiceAgent extends GuiAgent {
     protected void setup() {
         serviceAgentGUI = new ServiceAgentGUI(this);
 
-        ArrayList<CommonTask> myBehaviours;
+        ArrayList<CommonTask> tasks;
 
         serviceInterface = new ServiceProviderInterface();
 
-        myBehaviours = new ArrayList<>();
+        tasks = new ArrayList<>();
 
-        myBehaviours.add(serviceInterface);
-        myBehaviours.add(new ServiceProviderSecretary());
-        myBehaviours.add(new ServiceProviderScheduler());
+        tasks.add(serviceInterface);
+        tasks.add(new ServiceProviderSecretary());
+        tasks.add(new ServiceProviderScheduler());
 
-        addBehaviour(new BasicBehaviour(myBehaviours));
+        BasicBehaviour bb = new BasicBehaviour(tasks);
+
+        for(CommonTask ct : tasks){
+            ct.SetBasicBehaviour(bb);
+        }
+
+        addBehaviour(bb);
     }
 
     @Override
