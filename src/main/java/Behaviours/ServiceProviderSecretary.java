@@ -20,27 +20,19 @@ public class ServiceProviderSecretary extends CommonTask {
             String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_STATUS:
-                    //TODO
-                    break;
+                    return onReceiveReservationStatus(msg);
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_REQUEST:
                     return onReceiveReservationRequest(msg);
                 case Constants.ServiceProviderSecretaryMessages.SEND_RESERVATION_RESPONSE:
-                    //TODO
-                    break;
+                    return onSendReservationResponse(msg);
                 case Constants.ServiceProviderSecretaryMessages.SEND_RESERVATION_TO_PROCESS:
-                    //TODO
-                    break;
+                    return onSendReservationToProcess(msg);
                 case Constants.ServiceProviderSecretaryMessages.SEND_SERVICE_DATA:
-                    ACLMessage internalMsg = new ACLMessage();
-                    internalMsg.setConversationId(Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA);
-                   SendMessageToOtherTask(internalMsg);
-                    ACLMessage reply = msg.createReply();
-                    reply.setConversationId("TODO"); //TODO: set as Client constant
-                    reply.setContent(ServiceProviderData.serialize(serviceProviderData));
-                    return reply;
+                    return onSendServiceData(msg);
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_SERVICE_DATA:
-                    serviceProviderData = ServiceProviderData.deserialize(msg.getContent());
-                    break;
+                    return onReceiveServiceData(msg);
+                case Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION:
+                    return onCancelReservation(msg);
                 default:
                     return createNotUnderstoodMessage(msg);
             }
@@ -48,11 +40,13 @@ public class ServiceProviderSecretary extends CommonTask {
         return new ACLMessage();
     }
 
+
+
     private ACLMessage onReceiveReservationStatus(ACLMessage msg){
         //TODO
         return null;
     }
-    
+
     private ACLMessage onReceiveReservationRequest(ACLMessage msg){
         ReservationRequest reservationRequest = new ReservationRequest();
         reservationRequest = ReservationRequest.deserialize(msg.getContent());
@@ -69,6 +63,37 @@ public class ServiceProviderSecretary extends CommonTask {
         return null;
     }
 
+    private ACLMessage onSendReservationResponse(ACLMessage msg){
+        //TODO
+        return null;
+    }
+
+    private ACLMessage onSendReservationToProcess(ACLMessage msg){
+        //TODO
+        return null;
+    }
+
+    private ACLMessage onSendServiceData(ACLMessage msg){
+        ACLMessage internalMsg = new ACLMessage();
+        internalMsg.setConversationId(Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA);
+        SendMessageToOtherTask(internalMsg);
+        ACLMessage reply = msg.createReply();
+        reply.setConversationId("TODO"); //TODO: set as Client constant
+        reply.setContent(ServiceProviderData.serialize(serviceProviderData));
+        return reply;
+    }
+
+    private ACLMessage onReceiveServiceData(ACLMessage msg){
+        //TODO
+        serviceProviderData = ServiceProviderData.deserialize(msg.getContent());
+        return null;
+    }
+
+    private ACLMessage onCancelReservation(ACLMessage msg) {
+        //TODO
+        return null;
+    }
+
     @Override
     public boolean isMessageRelevant(ACLMessage msg) {
         if (msg != null) {
@@ -79,6 +104,7 @@ public class ServiceProviderSecretary extends CommonTask {
                 case Constants.ServiceProviderSecretaryMessages.SEND_RESERVATION_TO_PROCESS:
                 case Constants.ServiceProviderSecretaryMessages.SEND_SERVICE_DATA:
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_SERVICE_DATA:
+                case Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION:
                     return true;
                 default:
                     return false;

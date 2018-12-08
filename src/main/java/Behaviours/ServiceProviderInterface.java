@@ -70,7 +70,11 @@ public class ServiceProviderInterface extends CommonTask {
     private ACLMessage onSetServiceData(ACLMessage msg){
         try{
             setServiceProviderData(ServiceProviderData.deserialize(msg.getContent()));
-            System.out.println(this.toString());
+
+            ACLMessage internalMsg = new ACLMessage();
+            internalMsg.setConversationId(Constants.ServiceProviderSchedulerMessages.RECEIVE_SERVICE_DATA);
+            internalMsg.setContent(ServiceProviderData.serialize(serviceProviderData));
+            SendMessageToOtherTask(internalMsg);
         }
         catch(negativeValueException e)
         {

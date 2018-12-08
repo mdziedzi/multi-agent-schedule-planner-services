@@ -14,6 +14,7 @@ public class Constants {
         public static final String SEND_RESERVATION_TO_PROCESS = "send_reservation_to_process";
         public static final String RECEIVE_RESERVATION_STATUS = "receive_reservation_status";
         public static final String RECEIVE_SERVICE_DATA = "receive_service_data_secretary";
+        public static final String CANCEL_RESERVATION = "cancel_reservation";
     }
 
     public static class ServiceProviderSchedulerMessages {

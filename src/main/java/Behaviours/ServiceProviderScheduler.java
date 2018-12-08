@@ -2,6 +2,7 @@ package Behaviours;
 
 import Constants.Constants;
 import Data.ReservationData;
+import Data.ServiceProviderData;
 import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
@@ -11,10 +12,16 @@ public class ServiceProviderScheduler extends CommonTask {
 
     private static final Date slotDuration = new Date(0, 0, 0, 0, 15);
 
+    private Date beginHour;
+    private Date endHour;
+    private int maximumNumberOfPlaces;
     private ArrayList<ArrayList<ReservationData>> reservations;
 
     public ServiceProviderScheduler() {
-        reservations = null;
+        reservations = new ArrayList<>();
+        beginHour = null;
+        endHour = null;
+        maximumNumberOfPlaces = 0;
     }
 
     @Override
@@ -23,7 +30,7 @@ public class ServiceProviderScheduler extends CommonTask {
             String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderSchedulerMessages.NOTIFY_CHANGES:
-                    return onNotyfiChanges(msg);
+                    return onNotifyChanges(msg);
                 case Constants.ServiceProviderSchedulerMessages.RECEIVE_RESERVATION_TO_PROCESS:
                     return onReceiveReservationToProcess(msg);
                 case Constants.ServiceProviderSchedulerMessages.RECEIVE_SERVICE_DATA:
@@ -37,19 +44,54 @@ public class ServiceProviderScheduler extends CommonTask {
         return new ACLMessage();
     }
 
-    private ACLMessage onNotyfiChanges(ACLMessage msg){
+    private ACLMessage onNotifyChanges(ACLMessage msg) {
         //TODO
         return null;
     }
-    private ACLMessage onReceiveReservationToProcess(ACLMessage msg){
+
+    private ACLMessage onReceiveReservationToProcess(ACLMessage msg) {
         //TODO
         return null;
     }
-    private ACLMessage onReceiveServiceData(ACLMessage msg){
-        //TODO
+
+    private ACLMessage onReceiveServiceData(ACLMessage msg) {
+        ServiceProviderData serviceProviderData = new ServiceProviderData();
+        serviceProviderData = ServiceProviderData.deserialize(msg.getContent());
+        ArrayList<ArrayList<ReservationData>> newReservations = new ArrayList<>();
+
+        if (maximumNumberOfPlaces > serviceProviderData.maximumNumberOfPlaces) {
+            for (int y = 0; y < reservations.size(); y++) {
+                for(int x = maximumNumberOfPlaces;x >= serviceProviderData.maximumNumberOfPlaces; x--){
+                    if(reservations.get(y).get(x) != null){
+                        ACLMessage internalMsg = new ACLMessage();
+                        internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
+                        internalMsg.setContent(ReservationData.serialize(reservations.get(y).get(x)));
+                        SendMessageToOtherTask(internalMsg);
+                        reservations.get(y).remove(x);
+                    }
+                }
+
+            }
+        }
+        if(maximumNumberOfPlaces < serviceProviderData.maximumNumberOfPlaces){
+            for(int y = 0; y < reservations.size(); y++){
+                for(int x = maximumNumberOfPlaces; x < serviceProviderData.maximumNumberOfPlaces; x++){
+                    reservations.get(y).add(null);
+                }
+            }
+        }
+
+
+        if (maximumNumberOfPlaces != serviceProviderData.maximumNumberOfPlaces ||
+                beginHour != serviceProviderData.openingHour ||
+                endHour != serviceProviderData.closingHour) {
+
+
+        }
         return null;
     }
-    private ACLMessage onSendReservationStatus(ACLMessage msg){
+
+    private ACLMessage onSendReservationStatus(ACLMessage msg) {
         //TODO
         return null;
     }
