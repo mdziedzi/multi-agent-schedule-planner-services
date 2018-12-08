@@ -42,5 +42,5 @@ public class Constants {
         public static final String SEND_TASK = "send_task";
         public static final String RECEIVE_RESERVATION_STATUS = "receive_reservation_status";
     }
-    
+
 }

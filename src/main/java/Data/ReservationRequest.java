@@ -1,6 +1,6 @@
 package Data;
 
-import jade.core.AID;
+import Exceptions.negativeValueException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,21 +9,26 @@ import java.io.ObjectOutputStream;
 import java.util.Base64;
 import java.util.Date;
 
-public class ReservationData {
-    public  int id;
-    public AID agentId;
+public class ReservationRequest {
     public Date beginHour;
     public Date endHour;
+    public int slots;
 
-    public ReservationData() {
-        id = 0;
-        agentId = null;
+
+    public ReservationRequest(){
         beginHour = null;
         endHour = null;
+        slots = 0;
     }
 
+    public ReservationRequest(Date bHour, Date eHour, int slotsNumber) throws negativeValueException{
+        if(slots <= 0) throw new negativeValueException("Slots should be greater than zero: "+ slots);
+        slots = slotsNumber;
+        beginHour = bHour;
+        endHour =eHour;
+    }
 
-    public static String serialize(ReservationData data) {
+    public static String serialize(ReservationRequest data) {
         String serializedObject = "";
         try {
             ByteArrayOutputStream bo = new ByteArrayOutputStream();
@@ -40,18 +45,27 @@ public class ReservationData {
         return serializedObject;
     }
 
-    public static ReservationData deserialize(String serializedReservationRequestData){
-        ReservationData s = null;
+    public static ReservationRequest deserialize(String serializedReservationRequest){
+        ReservationRequest s = null;
         try {
-            final byte[] bytes = Base64.getDecoder().decode(serializedReservationRequestData);
-            byte b[] = serializedReservationRequestData.getBytes();
+            final byte[] bytes = Base64.getDecoder().decode(serializedReservationRequest);
+            byte b[] = serializedReservationRequest.getBytes();
             ByteArrayInputStream bi = new ByteArrayInputStream(bytes);
             ObjectInputStream si = new ObjectInputStream(bi);
-            s =  (ReservationData) si.readObject();
+            s =  (ReservationRequest) si.readObject();
         } catch (Exception e) {
             System.out.println(e);
             e.printStackTrace();
         }
         return s;
+    }
+
+    @Override
+    public String toString() {
+        return "ReservationRequest{" +
+                "beginHour=" + beginHour +
+                ", endHour=" + endHour +
+                ", slots=" + slots +
+                '}';
     }
 }

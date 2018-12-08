@@ -45,6 +45,6 @@ public class ServiceAgent extends GuiAgent {
         System.out.println(guiEvent.getParameter(0));
         ACLMessage msg = new ACLMessage();
         msg.setConversationId(Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA);
-        msg.setContent(ServiceProviderData.toString((ServiceProviderData) guiEvent.getParameter(0)));
+        msg.setContent(ServiceProviderData.serialize((ServiceProviderData) guiEvent.getParameter(0)));
     }
 }

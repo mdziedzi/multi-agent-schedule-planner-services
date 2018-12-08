@@ -36,7 +36,7 @@ public class ServiceProviderData implements Serializable {
         this.address = address;
     }
 
-    public static String toString(ServiceProviderData data) {
+    public static String serialize(ServiceProviderData data) {
         String serializedObject = "";
         try {
             ByteArrayOutputStream bo = new ByteArrayOutputStream();
@@ -53,7 +53,7 @@ public class ServiceProviderData implements Serializable {
         return serializedObject;
     }
 
-    public static ServiceProviderData fromString(String serializedServiceProviderData){
+    public static ServiceProviderData deserialize(String serializedServiceProviderData){
         ServiceProviderData s = null;
         try {
             final byte[] bytes = Base64.getDecoder().decode(serializedServiceProviderData);

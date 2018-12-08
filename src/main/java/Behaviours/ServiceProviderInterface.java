@@ -5,7 +5,6 @@ import Data.ServiceProviderData;
 import Exceptions.negativeValueException;
 import jade.lang.acl.ACLMessage;
 
-import java.util.Date;
 import java.util.Objects;
 
 
@@ -50,12 +49,12 @@ public class ServiceProviderInterface extends CommonTask {
                 case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
                     ACLMessage reply = msg.createReply();
                     reply.setConversationId(Constants.ServiceProviderSecretaryMessages.RECEIVE_SERVICE_DATA);
-                    reply.setContent(ServiceProviderData.toString(serviceProviderData));
+                    reply.setContent(ServiceProviderData.serialize(serviceProviderData));
                     basicBehaviour.SendMessageToTask(reply);
                     break;
                 case Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA:
                     try{
-                        setServiceProviderData(ServiceProviderData.fromString(msg.getContent()));
+                        setServiceProviderData(ServiceProviderData.deserialize(msg.getContent()));
                         System.out.println(this.toString());
                     }
                     catch(negativeValueException e)

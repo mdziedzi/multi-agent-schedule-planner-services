@@ -1,6 +1,8 @@
 package Behaviours;
 
 import Constants.Constants;
+import Data.ReservationData;
+import Data.ReservationRequest;
 import Data.ServiceProviderData;
 import jade.lang.acl.ACLMessage;
 
@@ -9,7 +11,7 @@ public class ServiceProviderSecretary extends CommonTask {
     private ServiceProviderData serviceProviderData;
 
     public ServiceProviderSecretary() {
-        this.serviceProviderData = new ServiceProviderData();
+        serviceProviderData = new ServiceProviderData();
     }
 
     @Override
@@ -21,8 +23,7 @@ public class ServiceProviderSecretary extends CommonTask {
                     //TODO
                     break;
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_REQUEST:
-                    //TODO
-                    break;
+                    return onReceiveReservationRequest(msg);
                 case Constants.ServiceProviderSecretaryMessages.SEND_RESERVATION_RESPONSE:
                     //TODO
                     break;
@@ -32,19 +33,40 @@ public class ServiceProviderSecretary extends CommonTask {
                 case Constants.ServiceProviderSecretaryMessages.SEND_SERVICE_DATA:
                     ACLMessage internalMsg = new ACLMessage();
                     internalMsg.setConversationId(Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA);
-                    basicBehaviour.SendMessageToTask(internalMsg);
+                   SendMessageToOtherTask(internalMsg);
                     ACLMessage reply = msg.createReply();
                     reply.setConversationId("TODO"); //TODO: set as Client constant
-                    reply.setContent(ServiceProviderData.toString(serviceProviderData));
+                    reply.setContent(ServiceProviderData.serialize(serviceProviderData));
                     return reply;
                 case Constants.ServiceProviderSecretaryMessages.RECEIVE_SERVICE_DATA:
-                    serviceProviderData = ServiceProviderData.fromString(msg.getContent());
+                    serviceProviderData = ServiceProviderData.deserialize(msg.getContent());
                     break;
                 default:
                     return createNotUnderstoodMessage(msg);
             }
         }
         return new ACLMessage();
+    }
+
+    private ACLMessage onReceiveReservationStatus(ACLMessage msg){
+        //TODO
+        return null;
+    }
+    
+    private ACLMessage onReceiveReservationRequest(ACLMessage msg){
+        ReservationRequest reservationRequest = new ReservationRequest();
+        reservationRequest = ReservationRequest.deserialize(msg.getContent());
+        ReservationData reservationData = new ReservationData();
+        reservationData.agentId = msg.getSender();
+        reservationData.beginHour = reservationRequest.beginHour;
+        reservationData.endHour = reservationRequest.endHour;
+
+        ACLMessage internalMsg = new ACLMessage();
+        internalMsg.setConversationId(Constants.ServiceProviderSchedulerMessages.RECEIVE_RESERVATION_TO_PROCESS);
+        internalMsg.setContent(ReservationData.serialize(reservationData));
+        SendMessageToOtherTask(internalMsg);
+
+        return null;
     }
 
     @Override
