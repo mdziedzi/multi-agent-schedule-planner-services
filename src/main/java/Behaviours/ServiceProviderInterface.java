@@ -58,6 +58,15 @@ public class ServiceProviderInterface extends CommonTask {
                     break;
                 case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
                     break;
+                case Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA:
+                    try{
+                        setServiceProviderData(ServiceProviderData.fromString(msg.getContent()));
+                    }
+                    catch(negativeValueException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    break;
                 default:
                     return createNotUnderstoodMessage(msg);
             }

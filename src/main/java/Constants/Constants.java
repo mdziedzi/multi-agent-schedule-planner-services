@@ -4,6 +4,7 @@ public class Constants {
     public static class ServiceProviderInterfaceMessages {
         public static final String VERIFY_RESERVATION = "verify_reservation";
         public static final String SEND_SERVICE_DATA = "send_service_data";
+        public static final String SET_SERVICE_DATA = "set_service_data";
     }
 
     public static class ServiceProviderSecretaryMessages {
