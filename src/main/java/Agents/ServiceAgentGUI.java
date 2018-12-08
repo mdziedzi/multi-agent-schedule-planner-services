@@ -23,6 +23,15 @@ public class ServiceAgentGUI extends JFrame {
             "Type",
             "Address"};
 
+    private String[] defaults = {
+            "10:20",
+            "11:40",
+            "1",
+            "Nazwa",
+            "Dziekanat",
+            "EiTi"
+    };
+
     public ServiceAgentGUI(ServiceAgent serviceAgent) {
         this.serviceAgent = serviceAgent;
 
@@ -57,6 +66,7 @@ public class ServiceAgentGUI extends JFrame {
             JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
             p.add(fields[i]);
             fieldPanel.add(p);
+            fields[i].setText(defaults[i]);
         }
 
         fields[0].setToolTipText("hh:mm");

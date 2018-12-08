@@ -1,18 +1,18 @@
 package Agents;
 
 import Behaviours.*;
+import Constants.Constants;
 import Data.ServiceProviderData;
-import Exceptions.negativeValueException;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
+import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
 
 public class ServiceAgent extends GuiAgent {
 
     private ServiceAgentGUI serviceAgentGUI;
-
-    private ServiceProviderInterface serviceInterface;
+    private BasicBehaviour bb;
 
     @Override
     protected void setup() {
@@ -20,17 +20,15 @@ public class ServiceAgent extends GuiAgent {
 
         ArrayList<CommonTask> tasks;
 
-        serviceInterface = new ServiceProviderInterface();
-
         tasks = new ArrayList<>();
 
-        tasks.add(serviceInterface);
+        tasks.add(new ServiceProviderInterface());
         tasks.add(new ServiceProviderSecretary());
         tasks.add(new ServiceProviderScheduler());
 
-        BasicBehaviour bb = new BasicBehaviour(tasks);
+        bb = new BasicBehaviour(tasks);
 
-        for(CommonTask ct : tasks){
+        for (CommonTask ct : tasks) {
             ct.SetBasicBehaviour(bb);
         }
 
@@ -45,10 +43,8 @@ public class ServiceAgent extends GuiAgent {
     @Override
     protected void onGuiEvent(GuiEvent guiEvent) {
         System.out.println(guiEvent.getParameter(0));
-        try {
-            serviceInterface.setServiceProviderData((ServiceProviderData) guiEvent.getParameter(0));
-        } catch (negativeValueException e) {
-            e.printStackTrace(); //TODO
-        }
+        ACLMessage msg = new ACLMessage();
+        msg.setConversationId(Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA);
+        msg.setContent(ServiceProviderData.toString((ServiceProviderData) guiEvent.getParameter(0)));
     }
 }
