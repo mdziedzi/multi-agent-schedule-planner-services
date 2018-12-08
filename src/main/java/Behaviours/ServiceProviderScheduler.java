@@ -10,17 +10,17 @@ import java.util.Date;
 
 public class ServiceProviderScheduler extends CommonTask {
 
-    private static final Date slotDuration = new Date(0, 0, 0, 0, 15);
+    private static final int slotDuration = 15;
 
-    private Date beginHour;
-    private Date endHour;
+    private Date openingHour;
+    private Date closingHour;
     private int maximumNumberOfPlaces;
     private ArrayList<ArrayList<ReservationData>> reservations;
 
     public ServiceProviderScheduler() {
         reservations = new ArrayList<>();
-        beginHour = null;
-        endHour = null;
+        openingHour = null;
+        closingHour = null;
         maximumNumberOfPlaces = 0;
     }
 
@@ -55,9 +55,8 @@ public class ServiceProviderScheduler extends CommonTask {
     }
 
     private ACLMessage onReceiveServiceData(ACLMessage msg) {
-        ServiceProviderData serviceProviderData = new ServiceProviderData();
+        ServiceProviderData serviceProviderData;
         serviceProviderData = ServiceProviderData.deserialize(msg.getContent());
-        ArrayList<ArrayList<ReservationData>> newReservations = new ArrayList<>();
 
         if (maximumNumberOfPlaces > serviceProviderData.maximumNumberOfPlaces) {
             for (int y = 0; y < reservations.size(); y++) {
@@ -80,14 +79,52 @@ public class ServiceProviderScheduler extends CommonTask {
                 }
             }
         }
-
-
-        if (maximumNumberOfPlaces != serviceProviderData.maximumNumberOfPlaces ||
-                beginHour != serviceProviderData.openingHour ||
-                endHour != serviceProviderData.closingHour) {
-
-
+        int openingMinutes = openingHour.getHours() * 60 + openingHour.getMinutes();
+        int closingMinutes = closingHour.getHours() * 60 + openingHour.getMinutes();
+        int newOpeningMinutes = serviceProviderData.openingHour.getHours() * 60 + serviceProviderData.openingHour.getMinutes();
+        int newClosingMinutes = serviceProviderData.closingHour.getHours() * 60 + serviceProviderData.closingHour.getMinutes();
+        if(openingMinutes < newOpeningMinutes){
+            int slotsToDelete = (newOpeningMinutes - openingMinutes) / slotDuration;
+            for(int y = 0; y < slotsToDelete; y++){
+                for(int x = maximumNumberOfPlaces; x >= 0; x--) {
+                    if(reservations.get(y).get(x) != null){
+                        ACLMessage internalMsg = new ACLMessage();
+                        internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
+                        internalMsg.setContent(ReservationData.serialize(reservations.get(y).get(x)));
+                        SendMessageToOtherTask(internalMsg);
+                    }
+                }
+                reservations.remove(y);
+            }
         }
+        if(openingMinutes > newOpeningMinutes){
+            int slotsToInsert = (openingMinutes - newOpeningMinutes) / slotDuration;
+            for(int y = 0; y < slotsToInsert; y++){
+                reservations.add(0, new ArrayList<>(maximumNumberOfPlaces));
+            }
+        }
+        if(closingMinutes > newClosingMinutes){
+            int slotsToDelete = (closingMinutes - newClosingMinutes) / slotDuration;
+            for(int y = 0; y < slotsToDelete; y++){
+                for(int x = maximumNumberOfPlaces; x >= 0; x--) {
+                    if(reservations.get(y).get(x) != null){
+                        ACLMessage internalMsg = new ACLMessage();
+                        internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
+                        internalMsg.setContent(ReservationData.serialize(reservations.get(y).get(x)));
+                        SendMessageToOtherTask(internalMsg);
+                    }
+                }
+                reservations.remove(y);
+            }
+        }
+        if(closingMinutes < newClosingMinutes){
+            int slotsToInsert = (newClosingMinutes - closingMinutes) / slotDuration;
+            for(int y = 0; y < slotsToInsert; y++){
+                reservations.add(0, new ArrayList<>(maximumNumberOfPlaces));
+            }
+        }
+
+
         return null;
     }
 
