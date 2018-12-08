@@ -23,18 +23,35 @@ public class ServiceProviderScheduler extends CommonTask {
             String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderSchedulerMessages.NOTIFY_CHANGES:
-                    break;
+                    return onNotyfiChanges(msg);
                 case Constants.ServiceProviderSchedulerMessages.RECEIVE_RESERVATION_TO_PROCESS:
-                    break;
+                    return onReceiveReservationToProcess(msg);
                 case Constants.ServiceProviderSchedulerMessages.RECEIVE_SERVICE_DATA:
-                    break;
+                    return onReceiveServiceData(msg);
                 case Constants.ServiceProviderSchedulerMessages.SEND_RESERVATION_STATUS:
-                    break;
+                    return onSendReservationStatus(msg);
                 default:
                     return createNotUnderstoodMessage(msg);
             }
         }
         return new ACLMessage();
+    }
+
+    private ACLMessage onNotyfiChanges(ACLMessage msg){
+        //TODO
+        return null;
+    }
+    private ACLMessage onReceiveReservationToProcess(ACLMessage msg){
+        //TODO
+        return null;
+    }
+    private ACLMessage onReceiveServiceData(ACLMessage msg){
+        //TODO
+        return null;
+    }
+    private ACLMessage onSendReservationStatus(ACLMessage msg){
+        //TODO
+        return null;
     }
 
     @Override

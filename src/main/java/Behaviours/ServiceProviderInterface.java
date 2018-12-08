@@ -44,28 +44,39 @@ public class ServiceProviderInterface extends CommonTask {
             String conversationId = msg.getConversationId();
             switch (conversationId) {
                 case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
-                    //TODO
-                    break;
+                    return onVerifyReservation(msg);
                 case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
-                    ACLMessage reply = msg.createReply();
-                    reply.setConversationId(Constants.ServiceProviderSecretaryMessages.RECEIVE_SERVICE_DATA);
-                    reply.setContent(ServiceProviderData.serialize(serviceProviderData));
-                    basicBehaviour.SendMessageToTask(reply);
-                    break;
+                    return onSendServiceData(msg);
                 case Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA:
-                    try{
-                        setServiceProviderData(ServiceProviderData.deserialize(msg.getContent()));
-                        System.out.println(this.toString());
-                    }
-                    catch(negativeValueException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    break;
+                    return onSetServiceData(msg);
                 default:
                     return createNotUnderstoodMessage(msg);
             }
         }
+        return new ACLMessage();
+    }
+    private ACLMessage onSendServiceData(ACLMessage msg){
+        ACLMessage reply = msg.createReply();
+        reply.setConversationId(Constants.ServiceProviderSecretaryMessages.RECEIVE_SERVICE_DATA);
+        reply.setContent(ServiceProviderData.serialize(serviceProviderData));
+        SendMessageToOtherTask(reply);
+
+        return new ACLMessage();
+    }
+    private ACLMessage onVerifyReservation(ACLMessage msg){
+        //TODO
+        return null;
+    }
+    private ACLMessage onSetServiceData(ACLMessage msg){
+        try{
+            setServiceProviderData(ServiceProviderData.deserialize(msg.getContent()));
+            System.out.println(this.toString());
+        }
+        catch(negativeValueException e)
+        {
+            e.printStackTrace();
+        }
+
         return new ACLMessage();
     }
 
