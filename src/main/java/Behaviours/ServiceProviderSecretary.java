@@ -78,7 +78,7 @@ public class ServiceProviderSecretary extends CommonTask {
         internalMsg.setConversationId(Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA);
         SendMessageToOtherTask(internalMsg);
         ACLMessage reply = msg.createReply();
-        reply.setConversationId("TODO"); //TODO: set as Client constant
+        reply.setConversationId(Constants.CustomerSecretaryMessages.RECEIVE_SERVICE_DATA);
         reply.setContent(ServiceProviderData.serialize(serviceProviderData));
         return reply;
     }
