@@ -24,6 +24,11 @@ public class Constants {
         public static final String NOTIFY_CHANGES = "notify_changes";
     }
 
+    public static class ServiceAgentGuiMessages {
+        public static final int SERVICE_PROVIDER_DATA = 0;
+        public static final int RESERVATION_DATA = 1;
+    }
+
     //-------------------------------------------------------------------------------------------------------------
     public static class CustomerInterfaceMessages {
         public static final String SEND_TASK_DATA = "send_task_data";

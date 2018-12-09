@@ -43,8 +43,13 @@ public class ServiceAgent extends GuiAgent {
     @Override
     protected void onGuiEvent(GuiEvent guiEvent) {
         ACLMessage msg = new ACLMessage();
-        msg.setConversationId(Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA);
-        msg.setContent(ServiceProviderData.serialize((ServiceProviderData) guiEvent.getParameter(0)));
-        bb.SendMessageToTask(msg);
+        if (guiEvent.getType() == Constants.ServiceAgentGuiMessages.SERVICE_PROVIDER_DATA) {
+            msg.setConversationId(Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA);
+            msg.setContent(ServiceProviderData.serialize((ServiceProviderData) guiEvent.getParameter(0)));
+            bb.SendMessageToTask(msg);
+        } else if (guiEvent.getType() == Constants.ServiceAgentGuiMessages.RESERVATION_DATA) {
+            //TODO przepchnąć informacje o rezerwacji
+            serviceAgentGUI.showReservationInfo();
+        }
     }
 }
