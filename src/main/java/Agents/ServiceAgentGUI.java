@@ -177,7 +177,7 @@ public class ServiceAgentGUI extends JFrame {
 
 
     private Date parseDate(String date) throws ParseException {
-        return new SimpleDateFormat("hh:mm").parse(date);
+        return new SimpleDateFormat("HH:mm").parse(date);
     }
 
 
