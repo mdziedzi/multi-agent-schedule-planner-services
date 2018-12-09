@@ -19,8 +19,8 @@ public class ServiceProviderScheduler extends CommonTask {
     private ArrayList<ArrayList<ReservationData>> reservations;
 
     public ServiceProviderScheduler() {
-        reservations = new ArrayList<>();
-        reservations.add(new ArrayList<>());
+        reservations = new ArrayList<>(1);
+        reservations.add(new ArrayList<>(1));
         openingHour = new Date(0,0,0,0,0);
         closingHour = new Date(0,0,0,0,0);
         maximumNumberOfPlaces = 0;
@@ -91,32 +91,11 @@ public class ServiceProviderScheduler extends CommonTask {
         ServiceProviderData serviceProviderData;
         serviceProviderData = ServiceProviderData.deserialize(msg.getContent());
 
-        if (maximumNumberOfPlaces > serviceProviderData.maximumNumberOfPlaces) {
-            for (int y = 0; y < reservations.size(); y++) {
-                for (int x = maximumNumberOfPlaces; x >= serviceProviderData.maximumNumberOfPlaces; x--) {
-                    if (reservations.get(y).get(x) != null) {
-                        ACLMessage internalMsg = new ACLMessage();
-                        internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
-                        internalMsg.setContent(ReservationData.serialize(reservations.get(y).get(x)));
-                        SendMessageToOtherTask(internalMsg);
-                        reservations.get(y).remove(x);
-                    }
-                }
-
-            }
-        }
-        if (maximumNumberOfPlaces < serviceProviderData.maximumNumberOfPlaces) {
-            for (int y = 0; y < reservations.size(); y++) {
-                for (int x = maximumNumberOfPlaces; x < serviceProviderData.maximumNumberOfPlaces; x++) {
-                    reservations.get(y).add(null);
-                }
-            }
-        }
         int openingMinutes = openingHour.getHours() * 60 + openingHour.getMinutes();
         int closingMinutes = closingHour.getHours() * 60 + openingHour.getMinutes();
         int newOpeningMinutes = serviceProviderData.openingHour.getHours() * 60 + serviceProviderData.openingHour.getMinutes();
         int newClosingMinutes = serviceProviderData.closingHour.getHours() * 60 + serviceProviderData.closingHour.getMinutes();
-        if (openingMinutes < newOpeningMinutes) {
+        if (openingMinutes > newOpeningMinutes) {
             int slotsToDelete = (newOpeningMinutes - openingMinutes) / slotDuration;
             for (int y = 0; y < slotsToDelete; y++) {
                 for (int x = maximumNumberOfPlaces; x >= 0; x--) {
@@ -130,10 +109,10 @@ public class ServiceProviderScheduler extends CommonTask {
                 reservations.remove(y);
             }
         }
-        if (openingMinutes > newOpeningMinutes) {
+        if (openingMinutes < newOpeningMinutes) {
             int slotsToInsert = (openingMinutes - newOpeningMinutes) / slotDuration;
             for (int y = 0; y < slotsToInsert; y++) {
-                reservations.add(0, new ArrayList<>(maximumNumberOfPlaces));
+                reservations.add(new ArrayList<>(maximumNumberOfPlaces));
             }
         }
         if (closingMinutes > newClosingMinutes) {
@@ -157,6 +136,30 @@ public class ServiceProviderScheduler extends CommonTask {
             }
         }
 
+        if (maximumNumberOfPlaces > serviceProviderData.maximumNumberOfPlaces) {
+            for (int y = 0; y < reservations.size(); y++) {
+                for (int x = maximumNumberOfPlaces; x >= serviceProviderData.maximumNumberOfPlaces; x--) {
+                    if (reservations.get(y).get(x) != null) {
+                        ACLMessage internalMsg = new ACLMessage();
+                        internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
+                        internalMsg.setContent(ReservationData.serialize(reservations.get(y).get(x)));
+                        SendMessageToOtherTask(internalMsg);
+                        reservations.get(y).remove(x);
+                    }
+                }
+
+            }
+        }
+        if (maximumNumberOfPlaces < serviceProviderData.maximumNumberOfPlaces) {
+            for (int y = 0; y < reservations.size(); y++) {
+                for (int x = maximumNumberOfPlaces; x < serviceProviderData.maximumNumberOfPlaces; x++) {
+                    reservations.get(y).add(null);
+                }
+            }
+        }
+        maximumNumberOfPlaces = serviceProviderData.maximumNumberOfPlaces;
+        openingHour = serviceProviderData.openingHour;
+        closingHour = serviceProviderData.closingHour;
 
         return new ACLMessage();
     }

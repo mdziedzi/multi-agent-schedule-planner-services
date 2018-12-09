@@ -23,5 +23,4 @@ public abstract class CommonTask {
         reply.setContent("Not understood message");
         return reply;
     }
-
 }

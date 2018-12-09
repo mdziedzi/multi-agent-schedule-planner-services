@@ -72,7 +72,6 @@ public class ServiceProviderInterface extends CommonTask {
         return null;
     }
     private ACLMessage onSetServiceData(ACLMessage msg){
-        System.out.println("kurde działa");
         try{
             setServiceProviderData(ServiceProviderData.deserialize(msg.getContent()));
 
