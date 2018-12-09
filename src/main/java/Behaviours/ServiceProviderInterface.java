@@ -14,6 +14,10 @@ public class ServiceProviderInterface extends CommonTask {
     private ServiceProviderData serviceProviderData;
 
 
+    public ServiceProviderInterface() {
+        this.serviceProviderData = new ServiceProviderData();
+    }
+
     public void setServiceProviderData(ServiceProviderData data) throws negativeValueException {
         if (data.openingHour != null && serviceProviderData.openingHour != data.openingHour) {
             serviceProviderData.openingHour = data.openingHour;
@@ -68,6 +72,7 @@ public class ServiceProviderInterface extends CommonTask {
         return null;
     }
     private ACLMessage onSetServiceData(ACLMessage msg){
+        System.out.println("kurde działa");
         try{
             setServiceProviderData(ServiceProviderData.deserialize(msg.getContent()));
 
@@ -90,6 +95,7 @@ public class ServiceProviderInterface extends CommonTask {
             switch (msg.getConversationId()) {
                 case Constants.ServiceProviderInterfaceMessages.SEND_SERVICE_DATA:
                 case Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION:
+                case Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA:
                     return true;
                 default:
                     return false;

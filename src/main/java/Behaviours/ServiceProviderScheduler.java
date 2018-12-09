@@ -2,6 +2,7 @@ package Behaviours;
 
 import Constants.Constants;
 import Data.ReservationData;
+import Data.ReservationResponse;
 import Data.ServiceProviderData;
 import jade.lang.acl.ACLMessage;
 
@@ -19,8 +20,9 @@ public class ServiceProviderScheduler extends CommonTask {
 
     public ServiceProviderScheduler() {
         reservations = new ArrayList<>();
-        openingHour = null;
-        closingHour = null;
+        reservations.add(new ArrayList<>());
+        openingHour = new Date(0,0,0,0,0);
+        closingHour = new Date(0,0,0,0,0);
         maximumNumberOfPlaces = 0;
     }
 
@@ -50,8 +52,39 @@ public class ServiceProviderScheduler extends CommonTask {
     }
 
     private ACLMessage onReceiveReservationToProcess(ACLMessage msg) {
-        //TODO
-        return null;
+        ReservationData reservationData = ReservationData.deserialize(msg.getContent());
+        int openingTime = openingHour.getHours() * 60 + openingHour.getMinutes();
+        int closingTime = closingHour.getHours() * 60 + closingHour.getMinutes();
+        int requestedOpeningTime = reservationData.beginHour.getHours() * 60 + reservationData.beginHour.getMinutes();
+        int requestedClosingTime = reservationData.endHour.getHours() * 60 + reservationData.endHour.getMinutes();
+
+        ACLMessage internalMsg = new ACLMessage();
+        internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.RECEIVE_RESERVATION_STATUS);
+
+        if (requestedOpeningTime < openingTime) {
+            String explanation = "This service opens at " + openingHour.getHours() + ":" + openingHour.getMinutes();
+            internalMsg.setContent(ReservationResponse.serialize(new ReservationResponse(-1, explanation)));
+            SendMessageToOtherTask(internalMsg);
+        } else if (requestedClosingTime > closingTime) {
+            String explanation = "This service closes at" + closingHour.getHours() + ":" + closingHour.getMinutes();
+            internalMsg.setContent(ReservationResponse.serialize(new ReservationResponse(-1, explanation)));
+            SendMessageToOtherTask(internalMsg);
+        } else {
+            int firstSlot = (requestedOpeningTime - openingTime) / slotDuration;
+            int lastSlot = (closingTime - requestedClosingTime) / slotDuration;
+            for (int x = firstSlot - 1; x < lastSlot; x++) {
+                if (reservations.get(x).size() == maximumNumberOfPlaces) {
+                    int hours = Math.round((openingTime + x * slotDuration) / 60);
+                    int minutes = ((openingTime + x * slotDuration) / 60) % 60;
+                    String explanation = "The slot at " + hours + ":" + minutes + " is full";
+                    internalMsg.setContent(ReservationResponse.serialize(new ReservationResponse(-1, explanation)));
+                    SendMessageToOtherTask(internalMsg);
+                    return new ACLMessage();
+                }
+            }
+        }
+
+        return new ACLMessage();
     }
 
     private ACLMessage onReceiveServiceData(ACLMessage msg) {
@@ -60,8 +93,8 @@ public class ServiceProviderScheduler extends CommonTask {
 
         if (maximumNumberOfPlaces > serviceProviderData.maximumNumberOfPlaces) {
             for (int y = 0; y < reservations.size(); y++) {
-                for(int x = maximumNumberOfPlaces;x >= serviceProviderData.maximumNumberOfPlaces; x--){
-                    if(reservations.get(y).get(x) != null){
+                for (int x = maximumNumberOfPlaces; x >= serviceProviderData.maximumNumberOfPlaces; x--) {
+                    if (reservations.get(y).get(x) != null) {
                         ACLMessage internalMsg = new ACLMessage();
                         internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
                         internalMsg.setContent(ReservationData.serialize(reservations.get(y).get(x)));
@@ -72,9 +105,9 @@ public class ServiceProviderScheduler extends CommonTask {
 
             }
         }
-        if(maximumNumberOfPlaces < serviceProviderData.maximumNumberOfPlaces){
-            for(int y = 0; y < reservations.size(); y++){
-                for(int x = maximumNumberOfPlaces; x < serviceProviderData.maximumNumberOfPlaces; x++){
+        if (maximumNumberOfPlaces < serviceProviderData.maximumNumberOfPlaces) {
+            for (int y = 0; y < reservations.size(); y++) {
+                for (int x = maximumNumberOfPlaces; x < serviceProviderData.maximumNumberOfPlaces; x++) {
                     reservations.get(y).add(null);
                 }
             }
@@ -83,11 +116,11 @@ public class ServiceProviderScheduler extends CommonTask {
         int closingMinutes = closingHour.getHours() * 60 + openingHour.getMinutes();
         int newOpeningMinutes = serviceProviderData.openingHour.getHours() * 60 + serviceProviderData.openingHour.getMinutes();
         int newClosingMinutes = serviceProviderData.closingHour.getHours() * 60 + serviceProviderData.closingHour.getMinutes();
-        if(openingMinutes < newOpeningMinutes){
+        if (openingMinutes < newOpeningMinutes) {
             int slotsToDelete = (newOpeningMinutes - openingMinutes) / slotDuration;
-            for(int y = 0; y < slotsToDelete; y++){
-                for(int x = maximumNumberOfPlaces; x >= 0; x--) {
-                    if(reservations.get(y).get(x) != null){
+            for (int y = 0; y < slotsToDelete; y++) {
+                for (int x = maximumNumberOfPlaces; x >= 0; x--) {
+                    if (reservations.get(y).get(x) != null) {
                         ACLMessage internalMsg = new ACLMessage();
                         internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
                         internalMsg.setContent(ReservationData.serialize(reservations.get(y).get(x)));
@@ -97,17 +130,17 @@ public class ServiceProviderScheduler extends CommonTask {
                 reservations.remove(y);
             }
         }
-        if(openingMinutes > newOpeningMinutes){
+        if (openingMinutes > newOpeningMinutes) {
             int slotsToInsert = (openingMinutes - newOpeningMinutes) / slotDuration;
-            for(int y = 0; y < slotsToInsert; y++){
+            for (int y = 0; y < slotsToInsert; y++) {
                 reservations.add(0, new ArrayList<>(maximumNumberOfPlaces));
             }
         }
-        if(closingMinutes > newClosingMinutes){
+        if (closingMinutes > newClosingMinutes) {
             int slotsToDelete = (closingMinutes - newClosingMinutes) / slotDuration;
-            for(int y = 0; y < slotsToDelete; y++){
-                for(int x = maximumNumberOfPlaces; x >= 0; x--) {
-                    if(reservations.get(y).get(x) != null){
+            for (int y = 0; y < slotsToDelete; y++) {
+                for (int x = maximumNumberOfPlaces; x >= 0; x--) {
+                    if (reservations.get(y).get(x) != null) {
                         ACLMessage internalMsg = new ACLMessage();
                         internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
                         internalMsg.setContent(ReservationData.serialize(reservations.get(y).get(x)));
@@ -117,15 +150,15 @@ public class ServiceProviderScheduler extends CommonTask {
                 reservations.remove(y);
             }
         }
-        if(closingMinutes < newClosingMinutes){
+        if (closingMinutes < newClosingMinutes) {
             int slotsToInsert = (newClosingMinutes - closingMinutes) / slotDuration;
-            for(int y = 0; y < slotsToInsert; y++){
+            for (int y = 0; y < slotsToInsert; y++) {
                 reservations.add(0, new ArrayList<>(maximumNumberOfPlaces));
             }
         }
 
 
-        return null;
+        return new ACLMessage();
     }
 
     private ACLMessage onSendReservationStatus(ACLMessage msg) {

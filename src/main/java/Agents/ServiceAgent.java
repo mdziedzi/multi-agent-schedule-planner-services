@@ -42,9 +42,9 @@ public class ServiceAgent extends GuiAgent {
 
     @Override
     protected void onGuiEvent(GuiEvent guiEvent) {
-        System.out.println(guiEvent.getParameter(0));
         ACLMessage msg = new ACLMessage();
         msg.setConversationId(Constants.ServiceProviderInterfaceMessages.SET_SERVICE_DATA);
         msg.setContent(ServiceProviderData.serialize((ServiceProviderData) guiEvent.getParameter(0)));
+        bb.SendMessageToTask(msg);
     }
 }
