@@ -31,11 +31,12 @@ public class Constants {
 
     //-------------------------------------------------------------------------------------------------------------
     public static class CustomerInterfaceMessages {
-        public static final String SEND_TASK_DATA = "send_task_data";
+        public static final String SEND_TASK_DATA = "send_task_data_interface";
+        public static final String SHOW_AGENDA = "show_agenda";
     }
 
     public static class CustomerSecretaryMessages {
-        public static final String SEND_TASK_DATA = "send_task_data";
+        public static final String SEND_TASK_DATA = "send_task_data_secretary";
         public static final String RECEIVE_TASK = "receive_task";
         public static final String SEND_RESERVATION_REQUEST = "send_reservation_request";
         public static final String RECEIVE_RESERVATION_RESPONSE = "receive_reservation_response";
@@ -46,7 +47,8 @@ public class Constants {
     public static class CustomerSchedulerMessages {
         public static final String NOTIFY_CHANGES = "notify_changes";
         public static final String RECIVE_TASK_DATA = "receive_task_data";
-        public static final String SEND_TASK = "send_task";
+        //        public static final String SEND_TASK = "send_task";
+        public static final String SEND_TASKS = "send_tasks";
         public static final String RECEIVE_RESERVATION_STATUS = "receive_reservation_status";
     }
 
