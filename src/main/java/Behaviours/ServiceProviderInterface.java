@@ -1,7 +1,7 @@
 package Behaviours;
 
 import Constants.Constants;
-import Data.ServiceProviderData;
+import Data.ServiceProvider.ServiceProviderData;
 import Exceptions.negativeValueException;
 import jade.lang.acl.ACLMessage;
 

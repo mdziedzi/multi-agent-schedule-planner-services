@@ -1,9 +1,9 @@
 package Behaviours;
 
 import Constants.Constants;
-import Data.ReservationData;
-import Data.ReservationResponse;
-import Data.ServiceProviderData;
+import Data.ServiceProvider.ReservationData;
+import Data.Common.ReservationResponse;
+import Data.ServiceProvider.ServiceProviderData;
 import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
@@ -24,6 +24,10 @@ public class ServiceProviderScheduler extends CommonTask {
         openingHour = new Date(0,0,0,0,0);
         closingHour = new Date(0,0,0,0,0);
         maximumNumberOfPlaces = 0;
+    }
+
+    private static int convertDateToMinutes(Date data) {
+        return data.getHours() * 60 + data.getMinutes();
     }
 
     @Override

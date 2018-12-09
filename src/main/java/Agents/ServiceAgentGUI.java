@@ -1,7 +1,7 @@
 package Agents;
 
 import Constants.Constants;
-import Data.ServiceProviderData;
+import Data.ServiceProvider.ServiceProviderData;
 import jade.gui.GuiEvent;
 
 import javax.swing.*;

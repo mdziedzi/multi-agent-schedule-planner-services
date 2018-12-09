@@ -1,4 +1,4 @@
-package Data;
+package Data.ServiceProvider;
 
 import java.io.*;
 import java.util.Base64;

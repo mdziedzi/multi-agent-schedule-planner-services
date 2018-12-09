@@ -1,29 +1,22 @@
-package Data;
-
-import jade.core.AID;
+package Data.Common;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Base64;
-import java.util.Date;
 
-public class ReservationData {
-    public  int id;
-    public AID agentId;
-    public Date beginHour;
-    public Date endHour;
+public class ReservationResponse {
 
-    public ReservationData() {
-        id = 0;
-        agentId = null;
-        beginHour = null;
-        endHour = null;
+    public int id; // id = -1 - the reservation is not possible, read explanation to see why
+    public String explanation;
+
+    public ReservationResponse(int id, String explanation) {
+        this.id = id;
+        this.explanation = explanation;
     }
 
-
-    public static String serialize(ReservationData data) {
+    public static String serialize(ReservationResponse data) {
         String serializedObject = "";
         try {
             ByteArrayOutputStream bo = new ByteArrayOutputStream();
@@ -40,14 +33,14 @@ public class ReservationData {
         return serializedObject;
     }
 
-    public static ReservationData deserialize(String serializedReservationRequestData){
-        ReservationData s = null;
+    public static ReservationResponse deserialize(String serializedReservationRequestData){
+        ReservationResponse s = null;
         try {
             final byte[] bytes = Base64.getDecoder().decode(serializedReservationRequestData);
             byte b[] = serializedReservationRequestData.getBytes();
             ByteArrayInputStream bi = new ByteArrayInputStream(bytes);
             ObjectInputStream si = new ObjectInputStream(bi);
-            s =  (ReservationData) si.readObject();
+            s =  (ReservationResponse) si.readObject();
         } catch (Exception e) {
             System.out.println(e);
             e.printStackTrace();

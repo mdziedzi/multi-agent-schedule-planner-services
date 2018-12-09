@@ -1,9 +1,9 @@
 package Behaviours;
 
 import Constants.Constants;
-import Data.ReservationData;
-import Data.ReservationRequest;
-import Data.ServiceProviderData;
+import Data.ServiceProvider.ReservationData;
+import Data.Common.ReservationRequest;
+import Data.ServiceProvider.ServiceProviderData;
 import jade.lang.acl.ACLMessage;
 
 public class ServiceProviderSecretary extends CommonTask {

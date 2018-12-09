@@ -2,7 +2,7 @@ package Agents;
 
 import Behaviours.*;
 import Constants.Constants;
-import Data.ServiceProviderData;
+import Data.ServiceProvider.ServiceProviderData;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;

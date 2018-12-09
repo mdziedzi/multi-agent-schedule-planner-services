@@ -1,4 +1,4 @@
-package Data;
+package Data.Common;
 
 import Exceptions.negativeValueException;
 
