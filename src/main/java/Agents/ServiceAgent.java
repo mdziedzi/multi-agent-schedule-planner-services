@@ -3,6 +3,10 @@ package Agents;
 import Behaviours.*;
 import Constants.Constants;
 import Data.ServiceProvider.ServiceProviderData;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
@@ -17,6 +21,18 @@ public class ServiceAgent extends GuiAgent {
     @Override
     protected void setup() {
         serviceAgentGUI = new ServiceAgentGUI(this);
+
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("service-provider");
+        sd.setName("service-provider-default-name");
+        dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
 
         ArrayList<CommonTask> tasks;
 
@@ -37,7 +53,13 @@ public class ServiceAgent extends GuiAgent {
 
     @Override
     protected void takeDown() {
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
         System.out.println("Service-agent " + getAID().getName() + " terminating.");
+
     }
 
     @Override
