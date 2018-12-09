@@ -2,14 +2,11 @@ package Data.ServiceProvider;
 
 import jade.core.AID;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Base64;
 import java.util.Date;
 
-public class ReservationData {
+public class ReservationData implements Serializable {
     public  int id;
     public AID agentId;
     public Date beginHour;
@@ -17,7 +14,7 @@ public class ReservationData {
 
     public ReservationData() {
         id = 0;
-        agentId = null;
+        //agentId = null;
         beginHour = null;
         endHour = null;
     }

@@ -40,7 +40,7 @@ public class BasicBehaviour extends CyclicBehaviour {
                 return ct.ProcessMessage(msg).getContent();
             }
         }
-        return new String();
+        return "";
     }
 
     public ACLMessage createNotUnderstoodMessage(ACLMessage message) {

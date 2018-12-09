@@ -4,6 +4,7 @@ import Constants.Constants;
 import Data.ServiceProvider.ReservationData;
 import Data.Common.ReservationResponse;
 import Data.ServiceProvider.ServiceProviderData;
+import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
 import java.util.*;
@@ -104,6 +105,7 @@ public class ServiceProviderScheduler extends CommonTask {
             this.newReservations = newReservations;
             openingHour = serviceProviderData.openingHour;
             closingHour = serviceProviderData.closingHour;
+            DEBUGforceFullReservations();
             printNewReservations();
             return new ACLMessage();
         }
@@ -112,6 +114,7 @@ public class ServiceProviderScheduler extends CommonTask {
             if(!newReservations.containsKey(entry.getKey())){
                 for(ReservationData r : entry.getValue()){
                     if(r != null){
+                        System.out.println("1removing " + entry.getKey() + " " + r.id);
                         ACLMessage internalMsg = new ACLMessage();
                         internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
                         internalMsg.setContent(ReservationData.serialize(r));
@@ -121,6 +124,7 @@ public class ServiceProviderScheduler extends CommonTask {
             } else{
                 if(this.maximumNumberOfPlaces <= serviceProviderData.maximumNumberOfPlaces){
                     for(ReservationData r: entry.getValue()) {
+                        System.out.println("1Adding");
                         for (int x = 0; x < maximumNumberOfPlaces; x++) {
                             newReservations.get(entry.getKey()).set(x, r);
                         }
@@ -131,8 +135,8 @@ public class ServiceProviderScheduler extends CommonTask {
                             newReservations.get(entry.getKey()).set(x, r);
                         }
                         for(int x = serviceProviderData.maximumNumberOfPlaces; x < maximumNumberOfPlaces; x++){
-                            System.out.println("removing " + x);
                             if(r != null) {
+                                System.out.println("2removing " + entry.getKey() + " " + r.id);
                                 ACLMessage internalMsg = new ACLMessage();
                                 internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
                                 internalMsg.setContent(ReservationData.serialize(r));
@@ -145,7 +149,7 @@ public class ServiceProviderScheduler extends CommonTask {
         }
 
         this.newReservations = newReservations;
-
+        // DEBUGforceFullReservations();
         printNewReservations();
         return new ACLMessage();
 
@@ -245,10 +249,23 @@ public class ServiceProviderScheduler extends CommonTask {
                 if (entry.getValue().get(x) == null) {
                     System.out.print("X ");
                 } else {
-                    System.out.print(x + " ");
+                    System.out.print(entry.getValue().get(x).id + " ");
                 }
             }
             System.out.println();
+        }
+    }
+
+    private void DEBUGforceFullReservations(){
+        for (Map.Entry<Integer, ArrayList<ReservationData>> entry : newReservations.entrySet()){
+            for(int x = 0; x < entry.getValue().size(); x++){
+                ReservationData r = new ReservationData();
+                r.id = x;
+                r.beginHour = new Date(0,0,0,10,0);
+                r.endHour = new Date(0,0,0,10,0);
+                r.agentId = new AID();
+                entry.getValue().set(x, r);
+            }
         }
     }
 

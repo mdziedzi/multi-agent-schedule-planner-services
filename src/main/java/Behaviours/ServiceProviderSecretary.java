@@ -65,12 +65,12 @@ public class ServiceProviderSecretary extends CommonTask {
 
     private ACLMessage onSendReservationResponse(ACLMessage msg){
         //TODO
-        return null;
+        return new ACLMessage();
     }
 
     private ACLMessage onSendReservationToProcess(ACLMessage msg){
         //TODO
-        return null;
+        return new ACLMessage();
     }
 
     private ACLMessage onSendServiceData(ACLMessage msg){
@@ -86,12 +86,12 @@ public class ServiceProviderSecretary extends CommonTask {
     private ACLMessage onReceiveServiceData(ACLMessage msg){
         //TODO
         serviceProviderData = ServiceProviderData.deserialize(msg.getContent());
-        return null;
+        return new ACLMessage();
     }
 
     private ACLMessage onCancelReservation(ACLMessage msg) {
         //TODO
-        return null;
+        return new ACLMessage();
     }
 
     @Override
