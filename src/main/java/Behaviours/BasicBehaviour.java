@@ -30,14 +30,17 @@ public class BasicBehaviour extends CyclicBehaviour {
         }
     }
 
-    public boolean SendMessageToTask(ACLMessage msg){
+    public void SendMessageToAgent(ACLMessage msg){
+        myAgent.send(msg);
+    }
+
+    public String SendMessageToTask(ACLMessage msg){
         for(CommonTask ct : TasksList){
             if(ct.isMessageRelevant(msg)){
-                ct.ProcessMessage(msg);
-                return true;
+                return ct.ProcessMessage(msg).getContent();
             }
         }
-        return false;
+        return new String();
     }
 
     public ACLMessage createNotUnderstoodMessage(ACLMessage message) {
