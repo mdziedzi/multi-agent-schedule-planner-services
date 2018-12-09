@@ -9,7 +9,7 @@ public abstract class CommonTask {
 
     protected BasicBehaviour basicBehaviour;
 
-    public boolean SendMessageToOtherTask(ACLMessage msg){
+    public String SendMessageToOtherTask(ACLMessage msg){
         return basicBehaviour.SendMessageToTask(msg);
     }
 
