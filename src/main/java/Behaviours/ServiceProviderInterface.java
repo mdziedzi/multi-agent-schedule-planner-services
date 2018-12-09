@@ -68,8 +68,10 @@ public class ServiceProviderInterface extends CommonTask {
         return new ACLMessage();
     }
     private ACLMessage onVerifyReservation(ACLMessage msg){
-        //TODO
-        return null;
+        //TODO 
+        ACLMessage message = new ACLMessage();
+        message.setContent("testowe info");
+        return message;
     }
     private ACLMessage onSetServiceData(ACLMessage msg){
         try{

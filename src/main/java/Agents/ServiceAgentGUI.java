@@ -1,6 +1,8 @@
 package Agents;
 
 import Constants.Constants;
+import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.components.TimePickerSettings;
 import Data.ServiceProvider.ServiceProviderData;
 import jade.gui.GuiEvent;
 
@@ -8,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 
 public class ServiceAgentGUI extends JFrame {
@@ -15,21 +18,19 @@ public class ServiceAgentGUI extends JFrame {
     private final ServiceAgent serviceAgent;
     private JPanel serviceDataPanel;
     private JPanel reservationPanel;
+    private JPanel reservationInfoPanel;
     private JPanel mainPanel;
     private JTextField[] fields;
     JButton sendBtn;
     JButton verifyBtn;
     private String[] labels = {
-            "Opening hour",
-            "Closing hour",
             "Max nr of places",
             "Name",
             "Type",
-            "Address"};
+            "Address",
+            "Open from to"};
 
     private String[] defaults = {
-            "10:20",
-            "11:40",
             "1",
             "Nazwa",
             "Dziekanat",
@@ -41,15 +42,12 @@ public class ServiceAgentGUI extends JFrame {
 
         createGUI();
 
-        setSize(400, 320);
-
-
+        setSize(450, 350);
     }
 
     private void createGUI() {
 
         mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         serviceDataPanel = new JPanel();
 
@@ -57,21 +55,48 @@ public class ServiceAgentGUI extends JFrame {
         serviceDataPanel.setLayout(new BorderLayout());
 
         reservationPanel = new JPanel();
-        reservationPanel.setLayout(new BorderLayout());
+        reservationPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         JPanel labelPanel = new JPanel(new GridLayout(labels.length, 1));
         JPanel fieldPanel = new JPanel(new GridLayout(labels.length, 1));
         serviceDataPanel.add(labelPanel, BorderLayout.WEST);
         serviceDataPanel.add(fieldPanel, BorderLayout.CENTER);
-        fields = new JTextField[labels.length];
+        fields = new JTextField[labels.length - 1];
 
-        for (int i = 0; i < labels.length; i += 1) {
+        TimePickerSettings timeSettings = new TimePickerSettings();
+        timeSettings.use24HourClockFormat();
+        timeSettings.initialTime = LocalTime.of(0, 0);
+        timeSettings.generatePotentialMenuTimes(
+                TimePickerSettings.TimeIncrement.FifteenMinutes,
+                null,
+                null);
+        TimePicker openPicker = new TimePicker(timeSettings);
+        timeSettings.initialTime = LocalTime.of(0, 15);
+        TimePicker endPicker = new TimePicker(timeSettings);
+
+        JLabel openLabel = new JLabel(labels[4], JLabel.RIGHT);
+        openLabel.setLabelFor(openPicker);
+        labelPanel.add(openLabel);
+
+        JPanel pickersPanel = new JPanel();
+
+        pickersPanel.add(openPicker);
+        pickersPanel.add(endPicker);
+
+        try {
+            System.out.println(parseDate(openPicker.getText()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        fieldPanel.add(pickersPanel);
+
+        for (int i = 0; i < labels.length - 1; i += 1) {
             fields[i] = new JTextField();
             fields[i].setColumns(20);
 
             JLabel lab = new JLabel(labels[i], JLabel.RIGHT);
             lab.setLabelFor(fields[i]);
-
 
             labelPanel.add(lab);
             JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -80,22 +105,18 @@ public class ServiceAgentGUI extends JFrame {
             fields[i].setText(defaults[i]);
         }
 
-        fields[0].setToolTipText("hh:mm");
-        fields[1].setToolTipText("hh:mm");
-
-
         sendBtn = new JButton("Send");
         sendBtn.addActionListener(e -> {
             try {
                 GuiEvent ge = new GuiEvent(ServiceAgentGUI.this,
                         Constants.ServiceAgentGuiMessages.SERVICE_PROVIDER_DATA);
                 ge.addParameter(new ServiceProviderData(
-                        parseDate(fields[0].getText()),
-                        parseDate(fields[1].getText()),
-                        Integer.valueOf(fields[2].getText()),
-                        fields[3].getText(),
-                        fields[4].getText(),
-                        fields[5].getText()));
+                        parseDate(openPicker.getText()),
+                        parseDate(endPicker.getText()),
+                        Integer.valueOf(fields[0].getText()),
+                        fields[1].getText(),
+                        fields[2].getText(),
+                        fields[3].getText()));
                 serviceAgent.postGuiEvent(ge);
             } catch (ParseException e1) {
                 JOptionPane.showMessageDialog(
@@ -112,40 +133,38 @@ public class ServiceAgentGUI extends JFrame {
             }
         });
 
-        sendBtn.setSize(300, 50);
-        
         serviceDataPanel.add(sendBtn, BorderLayout.AFTER_LAST_LINE);
 
         mainPanel.add(serviceDataPanel);
         mainPanel.add(new JSeparator(JSeparator.HORIZONTAL));
-
-        JPanel labelReservationPanel = new JPanel(new GridLayout(2, 1));
-        JPanel fieldReservationPanel = new JPanel(new GridLayout(2, 1));
-        reservationPanel.add(labelReservationPanel, BorderLayout.WEST);
-        reservationPanel.add(fieldReservationPanel, BorderLayout.CENTER);
-
-        labelReservationPanel.add(new JLabel(" "));
-        fieldReservationPanel.add(new JLabel(" "));
 
         JTextField reservationTextField = new JTextField();
         reservationTextField.setColumns(20);
 
         JLabel reservationLabel = new JLabel("Reservation ID");
         reservationLabel.setLabelFor(reservationTextField);
-        labelReservationPanel.add(reservationLabel);
 
-        fieldReservationPanel.add(reservationTextField);
+        reservationPanel.add(reservationLabel);
+        reservationPanel.add(reservationTextField);
 
         verifyBtn = new JButton("Verify");
+
         verifyBtn.addActionListener(e -> {
-            GuiEvent ge = new GuiEvent(ServiceAgentGUI.this,
-                    Constants.ServiceAgentGuiMessages.RESERVATION_DATA);
-            ge.addParameter(Integer.valueOf(reservationTextField.getText()));
-            serviceAgent.postGuiEvent(ge);
+            if (!reservationTextField.getText().equals("")) {
+                GuiEvent ge = new GuiEvent(ServiceAgentGUI.this,
+                        Constants.ServiceAgentGuiMessages.RESERVATION_DATA);
+                ge.addParameter(Integer.valueOf(reservationTextField.getText()));
+                serviceAgent.postGuiEvent(ge);
+            }
         });
-        reservationPanel.add(verifyBtn, BorderLayout.SOUTH);
+        reservationPanel.add(verifyBtn);
 
         mainPanel.add(reservationPanel);
+
+        reservationInfoPanel = new JPanel();
+
+        mainPanel.add(reservationInfoPanel);
+
 
         this.add(mainPanel);
 
@@ -162,9 +181,8 @@ public class ServiceAgentGUI extends JFrame {
     }
 
 
-    public void showReservationInfo() {
-        JFrame reservationFrame = new JFrame("Reservation");
-        JPanel panel = new JPanel();
-        reservationFrame.setVisible(true);
+    public void showReservationInfo(String info) {
+        reservationInfoPanel.add(new JLabel(info));
+        ServiceAgentGUI.this.revalidate();
     }
 }

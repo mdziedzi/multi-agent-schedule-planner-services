@@ -48,8 +48,10 @@ public class ServiceAgent extends GuiAgent {
             msg.setContent(ServiceProviderData.serialize((ServiceProviderData) guiEvent.getParameter(0)));
             bb.SendMessageToTask(msg);
         } else if (guiEvent.getType() == Constants.ServiceAgentGuiMessages.RESERVATION_DATA) {
-            //TODO przepchnąć informacje o rezerwacji
-            serviceAgentGUI.showReservationInfo();
+            msg.setConversationId(Constants.ServiceProviderInterfaceMessages.VERIFY_RESERVATION);
+            msg.setContent(String.valueOf(guiEvent.getParameter(0)));
+            String info = bb.SendMessageToTask(msg);
+            serviceAgentGUI.showReservationInfo(info);
         }
     }
 }
