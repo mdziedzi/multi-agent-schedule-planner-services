@@ -2,7 +2,7 @@ package Constants;
 
 public class Constants {
     public static class ServiceProviderInterfaceMessages {
-        public static final String VERIFY_RESERVATION = "verify_reservation";
+        public static final String VERIFY_RESERVATION = "verify_reservation_interface";
         public static final String SEND_SERVICE_DATA = "send_service_data_interface";
         public static final String SET_SERVICE_DATA = "set_service_data";
     }
@@ -22,6 +22,7 @@ public class Constants {
         public static final String RECEIVE_SERVICE_DATA = "receive_service_data_scheduler";
         public static final String SEND_RESERVATION_STATUS = "send_reservation_status";
         public static final String NOTIFY_CHANGES = "notify_changes";
+        public static final String VERIFY_RESERVATION = "verify_reservation_scheduler";
     }
 
     public static class ServiceAgentGuiMessages {

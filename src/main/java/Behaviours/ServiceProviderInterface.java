@@ -68,9 +68,11 @@ public class ServiceProviderInterface extends CommonTask {
         return new ACLMessage();
     }
     private ACLMessage onVerifyReservation(ACLMessage msg){
-        //TODO 
+        ACLMessage internalMessage = new ACLMessage();
+        internalMessage.setConversationId(Constants.ServiceProviderSchedulerMessages.VERIFY_RESERVATION);
+        internalMessage.setContent(msg.getContent());
         ACLMessage message = new ACLMessage();
-        message.setContent("testowe info");
+        message.setContent(SendMessageToOtherTask(internalMessage));
         return message;
     }
     private ACLMessage onSetServiceData(ACLMessage msg){

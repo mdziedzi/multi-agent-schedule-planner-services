@@ -7,7 +7,7 @@ import java.util.Base64;
 import java.util.Date;
 
 public class ReservationData implements Serializable {
-    public  int id;
+    public int id;
     public AID agentId;
     public Date beginHour;
     public Date endHour;
@@ -17,6 +17,13 @@ public class ReservationData implements Serializable {
         //agentId = null;
         beginHour = null;
         endHour = null;
+    }
+
+    public ReservationData(ReservationData r) {
+        this.id = r.id;
+        this.agentId = r.agentId;
+        this.beginHour = r.beginHour;
+        this.endHour = r.endHour;
     }
 
 
@@ -37,14 +44,14 @@ public class ReservationData implements Serializable {
         return serializedObject;
     }
 
-    public static ReservationData deserialize(String serializedReservationRequestData){
+    public static ReservationData deserialize(String serializedReservationRequestData) {
         ReservationData s = null;
         try {
             final byte[] bytes = Base64.getDecoder().decode(serializedReservationRequestData);
             byte b[] = serializedReservationRequestData.getBytes();
             ByteArrayInputStream bi = new ByteArrayInputStream(bytes);
             ObjectInputStream si = new ObjectInputStream(bi);
-            s =  (ReservationData) si.readObject();
+            s = (ReservationData) si.readObject();
         } catch (Exception e) {
             System.out.println(e);
             e.printStackTrace();

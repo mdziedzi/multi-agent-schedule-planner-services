@@ -1,8 +1,8 @@
 package Behaviours;
 
 import Constants.Constants;
-import Data.ServiceProvider.ReservationData;
 import Data.Common.ReservationResponse;
+import Data.ServiceProvider.ReservationData;
 import Data.ServiceProvider.ServiceProviderData;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
@@ -16,11 +16,10 @@ public class ServiceProviderScheduler extends CommonTask {
     private Date openingHour;
     private Date closingHour;
     private int maximumNumberOfPlaces;
-    private Map<Integer, ArrayList<ReservationData>> newReservations;
-    // private ArrayList<ArrayList<ReservationData>> reservations;
+    private Map<Integer, ArrayList<ReservationData>> reservations;
 
     public ServiceProviderScheduler() {
-        newReservations = new TreeMap<>();
+        reservations = new TreeMap<>();
         openingHour = null;
         closingHour = null;
         maximumNumberOfPlaces = 0;
@@ -28,6 +27,20 @@ public class ServiceProviderScheduler extends CommonTask {
 
     private static int convertDateToMinutes(Date data) {
         return data.getHours() * 60 + data.getMinutes();
+    }
+
+    private static Map<Integer, ArrayList<ReservationData>> generateNewReservations(int openingMinutes, int closingMinutes, int maximumNumberOfPlaces) {
+        int slotsNumber;
+        if (openingMinutes > closingMinutes) {
+            slotsNumber = (24 * 60 - (openingMinutes - closingMinutes)) / slotDuration;
+        } else {
+            slotsNumber = (closingMinutes - openingMinutes) / slotDuration;
+        }
+        Map<Integer, ArrayList<ReservationData>> newReservations = new TreeMap<>();
+        for (int y = 0; y < slotsNumber; y++) {
+            newReservations.put((openingMinutes + (y * slotDuration)) % (24 * 60), new ArrayList<>(Collections.nCopies(maximumNumberOfPlaces, null)));
+        }
+        return newReservations;
     }
 
     @Override
@@ -43,12 +56,15 @@ public class ServiceProviderScheduler extends CommonTask {
                     return onReceiveServiceData(msg);
                 case Constants.ServiceProviderSchedulerMessages.SEND_RESERVATION_STATUS:
                     return onSendReservationStatus(msg);
+                case Constants.ServiceProviderSchedulerMessages.VERIFY_RESERVATION:
+                    return onVerifyReservation(msg);
                 default:
                     return createNotUnderstoodMessage(msg);
             }
         }
         return new ACLMessage();
     }
+
 
     private ACLMessage onNotifyChanges(ACLMessage msg) {
         //TODO
@@ -77,6 +93,7 @@ public class ServiceProviderScheduler extends CommonTask {
             int firstSlot = (requestedOpeningTime - openingTime) / slotDuration;
             int lastSlot = (closingTime - requestedClosingTime) / slotDuration;
             for (int x = firstSlot - 1; x < lastSlot; x++) {
+                // TODO
 //                if (reservations.get(x).size() == maximumNumberOfPlaces) {
 //                    int hours = Math.round((openingTime + x * slotDuration) / 60);
 //                    int minutes = ((openingTime + x * slotDuration) / 60) % 60;
@@ -101,19 +118,22 @@ public class ServiceProviderScheduler extends CommonTask {
         Map<Integer, ArrayList<ReservationData>> newReservations =
                 generateNewReservations(newOpeningMinutes, newClosingMinutes, serviceProviderData.maximumNumberOfPlaces);
 
+        // first initialization
         if (openingHour == null || closingHour == null) {
-            this.newReservations = newReservations;
+            this.reservations = newReservations;
             openingHour = serviceProviderData.openingHour;
             closingHour = serviceProviderData.closingHour;
+            maximumNumberOfPlaces = serviceProviderData.maximumNumberOfPlaces;
             DEBUGforceFullReservations();
             printNewReservations();
             return new ACLMessage();
         }
 
-        for (Map.Entry<Integer, ArrayList<ReservationData>> entry : this.newReservations.entrySet()) {
-            if(!newReservations.containsKey(entry.getKey())){
-                for(ReservationData r : entry.getValue()){
-                    if(r != null){
+
+        for (Map.Entry<Integer, ArrayList<ReservationData>> entry : this.reservations.entrySet()) {
+            if (!newReservations.containsKey(entry.getKey())) {
+                for (ReservationData r : entry.getValue()) {
+                    if (r != null) {
                         System.out.println("1removing " + entry.getKey() + " " + r.id);
                         ACLMessage internalMsg = new ACLMessage();
                         internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
@@ -121,35 +141,35 @@ public class ServiceProviderScheduler extends CommonTask {
                         SendMessageToOtherTask(internalMsg);
                     }
                 }
-            } else{
-                if(this.maximumNumberOfPlaces <= serviceProviderData.maximumNumberOfPlaces){
-                    for(ReservationData r: entry.getValue()) {
-                        System.out.println("1Adding");
+            } else {
+                if (this.maximumNumberOfPlaces <= serviceProviderData.maximumNumberOfPlaces) {
+                    for (ReservationData r : entry.getValue()) {
+                        System.out.println("1copying");
                         for (int x = 0; x < maximumNumberOfPlaces; x++) {
-                            newReservations.get(entry.getKey()).set(x, r);
+                            newReservations.get(entry.getKey()).set(x, new ReservationData(r));
                         }
                     }
-                } else{
-                    for(ReservationData r: entry.getValue()) {
-                        for (int x = 0; x < serviceProviderData.maximumNumberOfPlaces; x++) {
-                            newReservations.get(entry.getKey()).set(x, r);
-                        }
-                        for(int x = serviceProviderData.maximumNumberOfPlaces; x < maximumNumberOfPlaces; x++){
-                            if(r != null) {
-                                System.out.println("2removing " + entry.getKey() + " " + r.id);
-                                ACLMessage internalMsg = new ACLMessage();
-                                internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
-                                internalMsg.setContent(ReservationData.serialize(r));
-                                SendMessageToOtherTask(internalMsg);
-                            }
+                } else {
+
+                    for (int x = 0; x < serviceProviderData.maximumNumberOfPlaces; x++) {
+                        System.out.println("2copying");
+                        newReservations.get(entry.getKey()).set(x, new ReservationData(entry.getValue().get(x)));
+                    }
+                    for (int x = serviceProviderData.maximumNumberOfPlaces; x < maximumNumberOfPlaces; x++) {
+                        if (entry.getValue().get(x) != null) {
+                            System.out.println("2removing " + entry.getKey() + " " + entry.getValue().get(x).id);
+                            ACLMessage internalMsg = new ACLMessage();
+                            internalMsg.setConversationId(Constants.ServiceProviderSecretaryMessages.CANCEL_RESERVATION);
+                            internalMsg.setContent(ReservationData.serialize(entry.getValue().get(x)));
+                            SendMessageToOtherTask(internalMsg);
                         }
                     }
                 }
             }
         }
 
-        this.newReservations = newReservations;
-        // DEBUGforceFullReservations();
+        this.reservations = newReservations;
+        DEBUGforceFullReservations();
         printNewReservations();
         return new ACLMessage();
     }
@@ -159,22 +179,22 @@ public class ServiceProviderScheduler extends CommonTask {
         return null;
     }
 
-    private static Map<Integer, ArrayList<ReservationData>> generateNewReservations(int openingMinutes, int closingMinutes, int maximumNumberOfPlaces) {
-        int slotsNumber;
-        if (openingMinutes > closingMinutes) {
-            slotsNumber = (24 * 60 - (openingMinutes - closingMinutes)) / slotDuration;
-        } else {
-            slotsNumber = (closingMinutes - openingMinutes) / slotDuration;
+    private ACLMessage onVerifyReservation(ACLMessage msg) {
+        ACLMessage internalMsg = new ACLMessage();
+        for (Map.Entry<Integer, ArrayList<ReservationData>> entry : reservations.entrySet()) {
+            for(ReservationData r : entry.getValue()){
+                if(r.id == Integer.valueOf(msg.getContent())){
+                    internalMsg.setContent("reservation verified");
+                    return internalMsg;
+                }
+            }
         }
-        Map<Integer, ArrayList<ReservationData>> newReservations = new TreeMap<>();
-        for (int y = 0; y < slotsNumber; y++) {
-            newReservations.put(openingMinutes + (y * slotDuration), new ArrayList<>(Collections.nCopies(maximumNumberOfPlaces, null)));
-        }
-        return newReservations;
+        internalMsg.setContent("reservation does not exist");
+        return internalMsg;
     }
 
     private void printNewReservations() {
-        for (Map.Entry<Integer, ArrayList<ReservationData>> entry : newReservations.entrySet()) {
+        for (Map.Entry<Integer, ArrayList<ReservationData>> entry : reservations.entrySet()) {
             System.out.printf("%2d:%-2d | ", (int) Math.floor(entry.getKey() / 60.0), (entry.getKey() % 60));
             for (int x = 0; x < entry.getValue().size(); x++) {
                 if (entry.getValue().get(x) == null) {
@@ -187,13 +207,13 @@ public class ServiceProviderScheduler extends CommonTask {
         }
     }
 
-    private void DEBUGforceFullReservations(){
-        for (Map.Entry<Integer, ArrayList<ReservationData>> entry : newReservations.entrySet()){
-            for(int x = 0; x < entry.getValue().size(); x++){
+    private void DEBUGforceFullReservations() {
+        for (Map.Entry<Integer, ArrayList<ReservationData>> entry : reservations.entrySet()) {
+            for (int x = 0; x < entry.getValue().size(); x++) {
                 ReservationData r = new ReservationData();
                 r.id = x;
-                r.beginHour = new Date(0,0,0,10,0);
-                r.endHour = new Date(0,0,0,10,0);
+                r.beginHour = new Date(0, 0, 0, 10, 0);
+                r.endHour = new Date(0, 0, 0, 10, 0);
                 r.agentId = new AID();
                 entry.getValue().set(x, r);
             }
@@ -208,6 +228,7 @@ public class ServiceProviderScheduler extends CommonTask {
                 case Constants.ServiceProviderSchedulerMessages.RECEIVE_RESERVATION_TO_PROCESS:
                 case Constants.ServiceProviderSchedulerMessages.RECEIVE_SERVICE_DATA:
                 case Constants.ServiceProviderSchedulerMessages.SEND_RESERVATION_STATUS:
+                case Constants.ServiceProviderSchedulerMessages.VERIFY_RESERVATION:
                     return true;
                 default:
                     return false;
