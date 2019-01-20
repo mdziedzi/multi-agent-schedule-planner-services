@@ -21,6 +21,7 @@ public class ServiceAgentGUI extends JFrame {
     private JPanel reservationInfoPanel;
     private JPanel mainPanel;
     private JTextField[] fields;
+    private JLabel infoLabel;
     JButton sendBtn;
     JButton verifyBtn;
     private String[] labels = {
@@ -163,6 +164,10 @@ public class ServiceAgentGUI extends JFrame {
 
         reservationInfoPanel = new JPanel();
 
+        infoLabel = new JLabel("");
+
+        reservationInfoPanel.add(infoLabel);
+
         mainPanel.add(reservationInfoPanel);
 
 
@@ -182,7 +187,7 @@ public class ServiceAgentGUI extends JFrame {
 
 
     public void showReservationInfo(String info) {
-        reservationInfoPanel.add(new JLabel(info));
+        infoLabel.setText(info);
         ServiceAgentGUI.this.revalidate();
     }
 }
